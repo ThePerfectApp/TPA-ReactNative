@@ -7,5 +7,7 @@
 
 @interface TPAThePerfectApp : NSObject <RCTBridgeModule>
 
+- (void)tpaTestMethod:(NSString *)name;
+
 @end
   

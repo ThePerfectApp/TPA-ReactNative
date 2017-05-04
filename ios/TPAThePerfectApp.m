@@ -7,7 +7,14 @@
 {
     return dispatch_get_main_queue();
 }
-RCT_EXPORT_MODULE()
+RCT_EXPORT_MODULE(TPA)
+
+
+RCT_EXPORT_METHOD(tpaTestMethod:(NSString *)name)
+{
+    NSLog(@"Testing TPA %@", name);
+}
+
 
 @end
   
