@@ -63,5 +63,14 @@ module.exports.TPA = {
 				TPAThePerfectApp.trackTimingEventWithTags(event.category, event.name, duration, tags)
 			}
 		}
+	},
+
+	// Logging
+
+	logDebug: function (message) {
+
+		TPAThePerfectApp.logDebug(message)
+
 	}
+
 }
