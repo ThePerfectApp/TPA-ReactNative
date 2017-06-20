@@ -1,6 +1,6 @@
 
 {
-  "name": "react-native-the-perfect-app",
+  "name": "@the-perfect-app/react-native-the-perfect-app",
   "version": "1.0.0",
   "description": "TPA is the world leading tool for app distribution to mobile devices. Watch live statistics and collect both detailed crash reports and feedback with JIRA integration. TPA helps your team to quickly respond to actual app usage.",
   "main": "index.js",
@@ -8,10 +8,18 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "react-native"
+    "react-native",
+    "app",
+    "distribution",
+    "crash",
+    "feedback",
+    "analytics",
+    "tracking",
+    "mobile",
+    "apps"
   ],
   "author": "The Perfect App Ltd",
-  "license": "Proprietary",
+  "license": "Apache-2.0",
   "peerDependencies": {
     "react-native": "^0.44.2"
   }
