@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
 # Fix symbolic link in iOS Framework
-cd iOS/Frameworks
+cd ios/Frameworks/ThePerfectApp.framework
 
 echo "Removing current Symlinks files"
-rm Headers
-rm Resources
-rm ThePerfectApp
-rm Versions/Current
+rm -f Headers
+rm -f Resources
+rm -f ThePerfectApp
+rm -f Versions/Current
 	
 echo "Creating new Symlinks"
 cd Versions
