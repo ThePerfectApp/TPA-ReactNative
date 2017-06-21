@@ -22,8 +22,5 @@
     "apps"
   ],
   "author": "The Perfect App Ltd",
-  "license": "Apache-2.0",
-  "peerDependencies": {
-    "react-native": "^0.44.2"
-  }
+  "license": "Apache-2.0"
 }
