@@ -13,8 +13,11 @@ import java.util.Map;
 
 import io.tpa.tpalib.analytics.TpaTimingEvent;
 import io.tpa.tpalib.analytics.TpaTracker;
+import io.tpa.tpalib.ext.TpaLog;
 
 public class TPAThePerfectAppModule extends ReactContextBaseJavaModule {
+
+    private static final String TAG = "TPA";
 
     private final ReactApplicationContext reactContext;
 
@@ -68,6 +71,11 @@ public class TPAThePerfectAppModule extends ReactContextBaseJavaModule {
     public void trackTimingEventWithTags(String category, String name, Integer duration, ReadableMap tags) {
         TpaTimingEvent tpaTimingEvent = TpaTracker.startTimingEvent(category, name, recursivelyDeconstructReadableMap(tags));
         TpaTracker.trackTimingEvent(tpaTimingEvent, duration);
+    }
+
+    @ReactMethod
+    public void logDebug(String message) {
+        TpaLog.d(TAG, message);
     }
 
     //https://github.com/facebook/react-native/issues/4655
