@@ -57,5 +57,13 @@ RCT_EXPORT_METHOD(trackTimingEventWithTags:(NSString *)category name:(NSString *
     [[TPAManager sharedManager] trackTimingEvent:timingEvent duration:duration tags:tags];
 }
 
+// Logging
+
+RCT_EXPORT_METHOD(logDebug:(NSString *)message)
+{
+    [[TPAManager sharedManager] logMessage:message];
+}
+
+
 @end
   

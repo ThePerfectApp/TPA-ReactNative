@@ -150,7 +150,7 @@ typedef NS_ENUM(NSUInteger, TPAFeedbackInvocation)
 /**
  * Log message to loggingDestinations.
  */
-- (void)log:(NSString *_Nonnull)format args:(va_list)args;
+- (void)log:(NSString *_Nonnull)format args:(va_list _Nonnull)args;
 
 
 #pragma mark - Timed Events
@@ -189,8 +189,8 @@ NS_SWIFT_NAME(startTimingEvent(category:name:));
  * @param tags      Tags that can be used to filter events on TPA.
  */
 - (void)trackTimingEvent:(id _Nonnull)event
-                    tags:(NSDictionary * _Nonnull)tags
-NS_SWIFT_NAME(trackTimingEvent(tags:));
+                    tags:(NSDictionary * _Nullable)tags
+NS_SWIFT_NAME(trackTimingEvent(_:tags:));
 
 /**
  * Track a previously started timing.
@@ -202,7 +202,7 @@ NS_SWIFT_NAME(trackTimingEvent(tags:));
  */
 - (void)trackTimingEvent:(id _Nonnull)event
                 duration:(NSUInteger)duration
-NS_SWIFT_NAME(trackTimingEvent(duration:));
+NS_SWIFT_NAME(trackTimingEvent(_:duration:));
 
 /**
  * Track a previously started timing.
@@ -215,8 +215,8 @@ NS_SWIFT_NAME(trackTimingEvent(duration:));
  */
 - (void)trackTimingEvent:(id _Nonnull)event
                 duration:(NSUInteger)duration
-                    tags:(NSDictionary * _Nonnull)tags
-NS_SWIFT_NAME(trackTimingEvent(duration:tags:));
+                    tags:(NSDictionary * _Nullable)tags
+NS_SWIFT_NAME(trackTimingEvent(_:duration:tags:));
 
 
 #pragma mark - App Events
@@ -239,7 +239,7 @@ NS_SWIFT_NAME(trackEvent(category:name:));
  * @param category  The category of the event
  * @param tags      Tags that can be used to filter events on TPA.
  */
-- (void)trackEventWithCategory:(NSString * _Nonnull)category name:(NSString * _Nonnull)name tags:(NSDictionary * _Nonnull)tags
+- (void)trackEventWithCategory:(NSString * _Nonnull)category name:(NSString * _Nonnull)name tags:(NSDictionary * _Nullable)tags
 NS_SWIFT_NAME(trackEvent(category:name:tags:));
 
 /**
@@ -257,7 +257,7 @@ NS_SWIFT_NAME(trackEvent(category:name:tags:));
  * @param screenTitle  The title of the screen that is appearing.
  * @param tags         Tags that can be used to filter events on TPA.
  */
-- (void)trackScreenAppearing:(NSString * _Nonnull)screenTitle tags:(NSDictionary * _Nonnull)tags;
+- (void)trackScreenAppearing:(NSString * _Nonnull)screenTitle tags:(NSDictionary * _Nullable)tags;
 
 /**
  * Tracks a screen disappearing event. It is recommended to track screen
@@ -274,7 +274,7 @@ NS_SWIFT_NAME(trackEvent(category:name:tags:));
  * @param screenTitle  The title of the screen that is disappearing.
  * @param tags         Tags that can be used to filter events on TPA.
  */
-- (void)trackScreenDisappearing:(NSString * _Nonnull)screenTitle tags:(NSDictionary * _Nonnull)tags;
+- (void)trackScreenDisappearing:(NSString * _Nonnull)screenTitle tags:(NSDictionary * _Nullable)tags;
 
 #pragma mark - Esoteric stuff
 
@@ -304,4 +304,4 @@ extern void TPALog(NSString * _Nonnull format, ...);
 /**
  * Logs message to the destinations specified by [TPAManager loggingDestinations].
  */
-extern void TPALogv(NSString * _Nonnull format, va_list args);
+extern void TPALogv(NSString * _Nonnull format, va_list _Nonnull args);
