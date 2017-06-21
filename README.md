@@ -3,25 +3,22 @@
 
 ## Getting started
 
+Install the component using `npm`:
+
 `$ npm install @the-perfect-app/react-native-the-perfect-app --save`
 
-### Mostly automatic installation
+Configure the iOS and Android projects using the `link` command:
 
 `$ react-native link @the-perfect-app/react-native-the-perfect-app`
 
-Open your Xcode project and add ThePerfectApp.Framework which is located in ../node_modules/@the-perfect-app/react-native-the-perfect-app/ to "Link Binary With Libraries" build phase.
+### iOS
 
-### Manual installation
+1. Open the Xcode project and add `ThePerfectApp.Framework` to "Link Binary With Libraries" build phase. Tap `+` then `Add other...` and locate the framework in `../node_modules/@the-perfect-app/react-native-the-perfect-app/ios/Frameworks`
+2. add the following path to `Framework Search Path` for your build target: `$(SRCROOT)/../node_modules/@the-perfect-app/react-native-the-perfect-app/ios/Frameworks`
 
+Configure TPA with Project UUID and upload URL in the native AppDelegate and enable/disable features as needed. Refer to the documentation on your tpa.io domain for more information about configuring TPA.
 
-#### iOS
-
-1. In XCode, in the project navigator, right click `Libraries` ➜ `Add Files to [your project's name]`
-2. Go to `node_modules` ➜ `react-native-the-perfect-app` and add `TPAThePerfectApp.xcodeproj`
-3. In XCode, in the project navigator, select your project. Add `libTPAThePerfectApp.a` to your project's `Build Phases` ➜ `Link Binary With Libraries`
-4. Run your project (`Cmd+R`)<
-
-#### Android
+### Android
 
 1. Open up `android/app/src/main/java/[...]/MainActivity.java`
   - Add `import com.reactlibrary.TPAThePerfectAppPackage;` to the imports at the top of the file
@@ -36,11 +33,30 @@ Open your Xcode project and add ThePerfectApp.Framework which is located in ../n
       compile project(':react-native-the-perfect-app')
   	```
 
-## Usage
-```javascript
-import TPAThePerfectApp from 'react-native-the-perfect-app';
 
-// TODO: What to do with the module?
-TPAThePerfectApp;
+## Usage
+
+Refer to the documentation on your tpa.io domain for more information. When tracking an event, you shall provide a category and a name. All tracking methods can be called with tags, that can be used for segmentation on your perfect dashboards.
+
+```javascript
+import { TPA } from '@the-perfect-app/react-native-the-perfect-app';
+
+// Track events
+TPA.trackEvent('Action', 'ShowProfile')
+TPA.trackEventWithTags('Action', 'ShowProfile', { 'Gender':'F'}')
+
+// Track screens
+TPA.trackScreenAppearing('Screen Title')
+TPA.trackScreenDisappearing('Screen Title')
+
+// Track timing
+timing = TPA.startTimingEvent('Timing', 'Level 1')
+...
+TPA.trackTimingEvent(timing)
+
+
+// Debug logs
+TPA.logDebug('Error during activation')
+
 ```
   
