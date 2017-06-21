@@ -5,6 +5,7 @@
   "description": "TPA is the world leading tool for app distribution to mobile devices. Watch live statistics and collect both detailed crash reports and feedback with JIRA integration. TPA helps your team to quickly respond to actual app usage.",
   "main": "index.js",
   "scripts": {
+    "postinstall": "bash postinstall.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
