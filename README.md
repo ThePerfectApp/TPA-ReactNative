@@ -1,13 +1,15 @@
 
-# react-native-the-perfect-app
+# @the-perfect-app/react-native-the-perfect-app
 
 ## Getting started
 
-`$ npm install react-native-the-perfect-app --save`
+`$ npm install @the-perfect-app/react-native-the-perfect-app --save`
 
 ### Mostly automatic installation
 
-`$ react-native link react-native-the-perfect-app`
+`$ react-native link @the-perfect-app/react-native-the-perfect-app`
+
+Open your Xcode project and add ThePerfectApp.Framework which is located in ../node_modules/@the-perfect-app/react-native-the-perfect-app/ to "Link Binary With Libraries" build phase.
 
 ### Manual installation
 
