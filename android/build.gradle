@@ -28,9 +28,12 @@ android {
 
 repositories {
     mavenCentral()
+    maven { url "http://nexus.trifork.com/content/repositories/releases" }
 }
 
 dependencies {
     compile 'com.facebook.react:react-native:+'
+
+    compile 'io.tpa.tpalib:tpalib:1.6.2'
 }
   
