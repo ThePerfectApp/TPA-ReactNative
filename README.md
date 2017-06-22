@@ -34,7 +34,7 @@ import { TPA } from 'react-native-the-perfect-app';
 
 // Track events
 TPA.trackEvent('Action', 'ShowProfile')
-TPA.trackEventWithTags('Action', 'ShowProfile', { 'Gender':'F'}')
+TPA.trackEventWithTags('Action', 'ShowProfile', { 'Gender':'F'})
 
 // Track screens
 TPA.trackScreenAppearing('Screen Title')
