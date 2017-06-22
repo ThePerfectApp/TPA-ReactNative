@@ -34,6 +34,6 @@ repositories {
 dependencies {
     compile 'com.facebook.react:react-native:+'
 
-    compile 'io.tpa.tpalib:tpalib:1.6.1'
+    compile 'io.tpa.tpalib:tpalib:1.6.2'
 }
   
