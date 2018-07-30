@@ -3,13 +3,35 @@
  */
 'use strict';
 
-import { NativeModules } from 'react-native';
+import {
+	NativeModules
+} from 'react-native';
 
 var TPAThePerfectApp = NativeModules.TPAThePerfectApp;
 
 module.exports.TPA = {
 
-    // Screen tracking
+	// AutomaticJSErrorCatching
+	setupAutomaticJSErrorCatching: function () {
+		var defaultHandler = ErrorUtils.getGlobalHandler()
+		ErrorUtils.setGlobalHandler(wrapGlobalHandler); //feed errors directly to our wrapGlobalHandler function
+
+		async function wrapGlobalHandler(error, isFatal) {
+			console.log("--------------------------------------")
+			console.log("Error:")
+			console.log(error)
+
+			console.log("---")
+			console.log("isFatal:")
+			console.log(isFatal)
+
+			if (defaultHandler != null) {
+				defaultHandler(error, isFatal); //after you're finished, call the defaultHandler so that react-native also gets the error
+			}
+		}
+	},
+
+	// Screen tracking
 
 	trackScreenAppearing: function (title) {
 		TPAThePerfectApp.trackScreenAppearing(title)
@@ -40,12 +62,16 @@ module.exports.TPA = {
 	// Duration tracking
 
 	startTimingEvent: function (category, name) {
-		return {type: "timing", category: category, name: name, timestamp: Date.now()}
+		return {
+			type: "timing",
+			category: category,
+			name: name,
+			timestamp: Date.now()
+		}
 	},
 
 	trackTimingEvent: function (event) {
-
-		if (event.type = "timing") {
+		if (event.type = "timing")  {
 
 			var duration = Date.now() - event.timestamp
 			if (duration > 0) {
@@ -55,14 +81,23 @@ module.exports.TPA = {
 	},
 
 	trackTimingEventWithTags: function (event, tags) {
-
-		if (event.type = "timing") {
+		if (event.type = "timing")  {
 
 			var duration = Date.now() - event.timestamp
 			if (duration > 0) {
 				TPAThePerfectApp.trackTimingEventWithTags(event.category, event.name, duration, tags)
 			}
 		}
+	},
+
+	// Non Fatal Issues
+
+	reportNonFatalIssue: function (stackTraceString = null, reason = null, userInfoMap = null) {
+		if (stackTraceString == null) {
+			return
+		}
+
+		TPAThePerfectApp.reportNonFatalIssue(stackTraceString, reason, userInfoMap);
 	},
 
 	// Logging

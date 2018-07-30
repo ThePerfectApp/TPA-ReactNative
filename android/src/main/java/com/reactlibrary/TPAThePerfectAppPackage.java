@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings({"unused", "ArraysAsListWithZeroOrOneArgument"})
 public class TPAThePerfectAppPackage implements ReactPackage {
 
     @Override

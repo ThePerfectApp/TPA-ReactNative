@@ -46,15 +46,22 @@ RCT_EXPORT_METHOD(trackEventWithTags:(NSString *)category name:(NSString *)name 
 
 // Duration tracking
 
-RCT_EXPORT_METHOD(trackTimingEvent:(NSString *)category name:(NSString *)name duration:(NSUInteger)duration) {
-    
+RCT_EXPORT_METHOD(trackTimingEvent:(NSString *)category name:(NSString *)name duration:(NSUInteger)duration)
+{
     [self trackTimingEventWithTags:category name:name duration:duration tags:nil];
 }
 
-RCT_EXPORT_METHOD(trackTimingEventWithTags:(NSString *)category name:(NSString *)name duration:(NSUInteger)duration tags:(NSDictionary *)tags) {
-    
+RCT_EXPORT_METHOD(trackTimingEventWithTags:(NSString *)category name:(NSString *)name duration:(NSUInteger)duration tags:(NSDictionary *)tags)
+{
     id timingEvent = [[TPAManager sharedManager] startTimingEventWithCategory:category name:name];
     [[TPAManager sharedManager] trackTimingEvent:timingEvent duration:duration tags:tags];
+}
+
+// Non Fatal Issues
+
+RCT_EXPORT_METHOD(reportNonFatalIssue:(NSString *)stackTrace reason:(NSString *)reason userInfo:(NSDictionary *)userInfo)
+{
+    //TODO
 }
 
 // Logging
@@ -66,4 +73,3 @@ RCT_EXPORT_METHOD(logDebug:(NSString *)message)
 
 
 @end
-  
