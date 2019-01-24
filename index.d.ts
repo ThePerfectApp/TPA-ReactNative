@@ -2,6 +2,16 @@ export type CrashHandling = 'disabled'|'alwaysAsk'|'alwaysSend';
 export type LogType = 'none'|'console'|'remote'|'both';
 export type FeedbackInvocation = 'disabled'|'enabled'|'shake';
 
+/**
+ * Configuration interface. Used for configuring TPA in {@link TPA#initialize}.
+ * Options are:
+ *  - {@link crashHandling crashHandling}
+ *  - {@link logType logType}
+ *  - {@link feedbackInvocation feedbackInvocation}
+ *  - {@link isAnalyticsEnabled isAnalyticsEnabled}
+ *  - {@link isSessionRecordingEnabled isSessionRecordingEnabled}
+ *  - {@link tpaDebugLog tpaDebugLog}
+ */
 export interface Configuration {
     /**
      * Determines how crashes are handled.
@@ -39,7 +49,7 @@ export interface Configuration {
     /**
      * Determines if start and end session events are send to TPA. These include basic device information.
      * If disabled logging events are not reported to TPA even if {@link logType} is set to 'remote'.
-     * <strong>Important: </strong>This flag does nothing on Android.
+     * Important: This flag does nothing on Android.
      * @default false
      */
     isSessionRecordingEnabled?: boolean;
@@ -62,7 +72,7 @@ export class TPA {
 
     /**
      * Initialize the TPA library. This is best called in your index.js file before registering your App with the AppRegistry.
-     * @example <caption>Configuration shown with default values</caption>
+     * @example Configuration shown with default values
      * TPA.initialize('https://mytpainstance.tpa.io/', Platform.select({ios:'iOSProjectUUID', android:'AndroidProjectUUID'}), {
      *      crashHandling: 'disabled',
      *      logType: 'none',
@@ -73,7 +83,7 @@ export class TPA {
      * });
      * @param url - the base url to your TPA server. Can be found on the main page of your project.
      * @param projectUuid - The project UUID for your TPA project. Keep in mind that this will differ based on the platform. Use Platform.select(...) to easily configure your app based on the platform.
-     * @param configuration - The configurations for your app, if set to nil all defaults will be used. See {@link Configuration} for specifics.
+     * @param configuration - The configurations for your app, if set to nil all defaults will be used.
      */
     static initialize(url: string, projectUuid: string, configuration?: Configuration): void;
 
@@ -104,7 +114,7 @@ export class TPA {
      *     ...
      * }
      * @param title - the title of the screen, typically the name of a component.
-     * @param tags - an object containing tags, only string values are supported. <strong>Important: </strong> Do NOT include personal data in your tags.
+     * @param tags - an object containing tags, only string values are supported. Important: Do NOT include personal data in your tags.
      */
     static trackScreenAppearingWithTags(title: string, tags: { [key: string]: string }): void;
 
@@ -133,7 +143,7 @@ export class TPA {
      *     ...
      * }
      * @param title - the title of the screen, typically the name of a component.
-     * @param tags - an object containing tags, only string values are supported. <strong>Important: </strong> Do NOT include personal data in your tags.
+     * @param tags - an object containing tags, only string values are supported. Important: Do NOT include personal data in your tags.
      */
     static trackScreenDisappearingWithTags(title: string, tags: { [key: string]: string }): void;
 
@@ -154,7 +164,7 @@ export class TPA {
      * TPA.trackEventWithTags('My Category', 'Custom Event', {'My Tag':'Value'});
      * @param category - the category of the event.
      * @param name - the name of the event.
-     * @param tags - an object containing tags, only string values are supported. <strong>Important: </strong> Do NOT include personal data in your tags.
+     * @param tags - an object containing tags, only string values are supported. Important: Do NOT include personal data in your tags.
      */
     static trackEventWithTags(category: string, name: string, tags: { [key: string]: string }): void;
 
