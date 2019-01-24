@@ -54,6 +54,10 @@ export class TPA {
 
     static reportNonFatalIssueWithError(error: Error, reason?: string, userInfoMap?: { [key: string]: any }): void;
 
+    // Feedback
+
+    static startFeedback(): void;
+
     // Logging
 
     static logDebug(message: string): void;

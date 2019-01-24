@@ -18,7 +18,7 @@ NSString * const kTpaDebugLoggingJSKey = @"tpaDebugLog";
 }
 RCT_EXPORT_MODULE(TPAThePerfectApp)
 
-// Configuration
+#pragma mark - Configuration
 
 RCT_EXPORT_METHOD(initialize:(NSString *)url projectUuid:(NSString *)projectUuid configuration:(NSDictionary *)configuration)
 {
@@ -99,7 +99,7 @@ RCT_EXPORT_METHOD(initialize:(NSString *)url projectUuid:(NSString *)projectUuid
     return TPAFeedbackInvocationDisabled;
 }
 
-// Screen tracking
+#pragma mark - Screen tracking
 
 RCT_EXPORT_METHOD(trackScreenAppearing:(NSString *)title)
 {
@@ -121,7 +121,7 @@ RCT_EXPORT_METHOD(trackScreenDisappearingWithTags:(NSString *)title tags:(NSDict
     [[TPAManager sharedManager] trackScreenDisappearing:title tags:tags];
 }
 
-// Event tracking
+#pragma mark - Event tracking
 
 RCT_EXPORT_METHOD(trackEvent:(NSString *)category name:(NSString *)name)
 {
@@ -133,7 +133,7 @@ RCT_EXPORT_METHOD(trackEventWithTags:(NSString *)category name:(NSString *)name 
     [[TPAManager sharedManager] trackEventWithCategory:category name:name tags:tags];
 }
 
-// Duration tracking
+#pragma mark - Duration tracking
 
 RCT_EXPORT_METHOD(trackTimingEvent:(NSString *)category name:(NSString *)name duration:(NSUInteger)duration)
 {
@@ -146,14 +146,21 @@ RCT_EXPORT_METHOD(trackTimingEventWithTags:(NSString *)category name:(NSString *
     [[TPAManager sharedManager] trackTimingEvent:timingEvent duration:duration tags:tags];
 }
 
-// Non Fatal Issues
+#pragma mark - Non Fatal Issues
 
 RCT_EXPORT_METHOD(reportNonFatalIssue:(NSString *)stackTrace reason:(NSString *)reason userInfo:(NSDictionary *)userInfo)
 {
     [TPANonFatalReporting reportNonFatalIssueWithReason:reason stacktrace:stackTrace userInfo:userInfo];
 }
 
-// Logging
+#pragma mark - Feedback
+
+RCT_EXPORT_METHOD(startFeedback)
+{
+    [[TPAManager sharedManager] invokeFeedback];
+}
+
+#pragma mark - Logging
 
 RCT_EXPORT_METHOD(logDebug:(NSString *)message)
 {
