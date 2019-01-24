@@ -8,7 +8,6 @@ export interface Configuration {
     feedbackInvocation?: FeedbackInvocation;
     isAnalyticsEnabled?: boolean;
     isSessionRecordingEnabled?: boolean;
-    enableAutoTrackScreen?: boolean;
     tpaDebugLog?: boolean;
 }
 

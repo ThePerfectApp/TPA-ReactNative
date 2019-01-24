@@ -30,7 +30,6 @@ public class TPAReactNativeConfiguration {
     private TpaLog.Type logType = TpaLog.Type.NONE;
     private FeedbackInvocation feedbackInvocation = FeedbackInvocation.Disabled;
     private boolean isAnalyticsEnabled = false;
-    private boolean enabledAutoTrackScreen = false;
     private boolean tpaDebugLog = false;
     //endregion
 
@@ -46,7 +45,6 @@ public class TPAReactNativeConfiguration {
         LogType("logType"),
         FeedbackInvocation("feedbackInvocation"),
         IsAnalyticsEnabled("isAnalyticsEnabled"),
-        EnableAutoTrackScreen("enableAutoTrackScreen"),
         TpaDebugLog("tpaDebugLog");
 
         private final String jsKey;
@@ -105,10 +103,6 @@ public class TPAReactNativeConfiguration {
             isAnalyticsEnabled = configuration.getBoolean(ConfigurationKeys.IsAnalyticsEnabled.jsKey);
         }
 
-        if (configuration.hasKey(ConfigurationKeys.EnableAutoTrackScreen.jsKey)) {
-            enabledAutoTrackScreen = configuration.getBoolean(ConfigurationKeys.EnableAutoTrackScreen.jsKey);
-        }
-
         if (configuration.hasKey(ConfigurationKeys.TpaDebugLog.jsKey)) {
             tpaDebugLog = configuration.getBoolean(ConfigurationKeys.TpaDebugLog.jsKey);
         }
@@ -162,7 +156,6 @@ public class TPAReactNativeConfiguration {
         configBuilder.setCrashHandling(crashHandling);
         configBuilder.setLogType(logType);
         configBuilder.useShakeFeedback(feedbackInvocation == FeedbackInvocation.Shake);
-        configBuilder.enableAutoTrackScreen(enabledAutoTrackScreen);
         configBuilder.enableDebug(tpaDebugLog);
 
         return configBuilder.build();
@@ -190,10 +183,6 @@ public class TPAReactNativeConfiguration {
 
     public boolean isAnalyticsEnabled() {
         return isAnalyticsEnabled;
-    }
-
-    public boolean isEnabledAutoTrackScreen() {
-        return enabledAutoTrackScreen;
     }
 
     public boolean isTpaDebugLog() {
