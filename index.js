@@ -92,6 +92,12 @@ module.exports.TPA = {
 		TPAThePerfectApp.reportNonFatalIssue(error.stack, reason, userInfoMap);
 	},
 
+	// Feedback
+
+	startFeedback() {
+		TPAThePerfectApp.startFeedback();
+	},
+
 	// Logging
 
 	logDebug: function (message) {
