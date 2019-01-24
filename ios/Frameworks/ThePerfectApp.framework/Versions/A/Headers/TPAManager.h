@@ -92,6 +92,16 @@ typedef NS_ENUM(NSUInteger, TPAFeedbackInvocation)
  */
 @property (nonatomic, assign, getter=isMachExceptionHandlerEnabled) BOOL enableMachExceptionHandler;
 
+/**
+ * Log a non-fatal issue.
+ *
+ * Stacktrace will be auto generated
+ */
+- (void)reportNonFatalIssueWithReason:(NSString * _Nullable)reason error:(NSError *_Nullable)error;
+- (void)reportNonFatalIssueWithReason:(NSString * _Nullable)reason;
+- (void)reportNonFatalIssueWithError:(NSError *_Nullable)error NS_SWIFT_NAME(reportNonFatalIssue(withError:));
+- (void)reportNonFatalIssue;
+
 #pragma mark - Session Recording
 
 /**

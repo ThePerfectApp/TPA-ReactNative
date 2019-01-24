@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0E469EB51EBB217900E62208 /* ThePerfectApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E469EB41EBB217100E62208 /* ThePerfectApp.framework */; };
+		B0DF6FEF21F84D870089AFF7 /* TPANonFatalReporting.m in Sources */ = {isa = PBXBuildFile; fileRef = B0DF6FEE21F84D870089AFF7 /* TPANonFatalReporting.m */; };
 		B3E7B58A1CC2AC0600A0062D /* TPAThePerfectApp.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* TPAThePerfectApp.m */; };
 /* End PBXBuildFile section */
 
@@ -26,6 +27,8 @@
 /* Begin PBXFileReference section */
 		0E469EB41EBB217100E62208 /* ThePerfectApp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ThePerfectApp.framework; sourceTree = "<group>"; };
 		134814201AA4EA6300B7C361 /* libTPAThePerfectApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTPAThePerfectApp.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B0DF6FEE21F84D870089AFF7 /* TPANonFatalReporting.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TPANonFatalReporting.m; sourceTree = "<group>"; };
+		B0DF6FF021F84D940089AFF7 /* TPANonFatalReporting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TPANonFatalReporting.h; sourceTree = "<group>"; };
 		B3E7B5881CC2AC0600A0062D /* TPAThePerfectApp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TPAThePerfectApp.h; sourceTree = "<group>"; };
 		B3E7B5891CC2AC0600A0062D /* TPAThePerfectApp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TPAThePerfectApp.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -61,6 +64,8 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
+				B0DF6FF021F84D940089AFF7 /* TPANonFatalReporting.h */,
+				B0DF6FEE21F84D870089AFF7 /* TPANonFatalReporting.m */,
 				B3E7B5881CC2AC0600A0062D /* TPAThePerfectApp.h */,
 				B3E7B5891CC2AC0600A0062D /* TPAThePerfectApp.m */,
 				0E469EB31EBB217100E62208 /* Frameworks */,
@@ -125,6 +130,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B3E7B58A1CC2AC0600A0062D /* TPAThePerfectApp.m in Sources */,
+				B0DF6FEF21F84D870089AFF7 /* TPANonFatalReporting.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,7 +156,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../node_modules/@the-perfect-app/react-native-the-perfect-app/ios/Frameworks";
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../node_modules/react-native-the-perfect-app/ios/Frameworks";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -192,7 +198,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../node_modules/@the-perfect-app/react-native-the-perfect-app/ios/Frameworks";
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../node_modules/react-native-the-perfect-app/ios/Frameworks";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;

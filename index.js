@@ -3,13 +3,21 @@
  */
 'use strict';
 
-import { NativeModules } from 'react-native';
+import {
+	NativeModules
+} from 'react-native';
 
-var TPAThePerfectApp = NativeModules.TPAThePerfectApp;
+let TPAThePerfectApp = NativeModules.TPAThePerfectApp;
 
 module.exports.TPA = {
 
-    // Screen tracking
+	// Configuration
+
+	initialize: function(url, projectUuid, configuration) {
+		TPAThePerfectApp.initialize(url, projectUuid, configuration);
+	},
+
+	// Screen tracking
 
 	trackScreenAppearing: function (title) {
 		TPAThePerfectApp.trackScreenAppearing(title)
@@ -40,14 +48,18 @@ module.exports.TPA = {
 	// Duration tracking
 
 	startTimingEvent: function (category, name) {
-		return {type: "timing", category: category, name: name, timestamp: Date.now()}
+		return {
+			type: "timing",
+			category: category,
+			name: name,
+			timestamp: Date.now()
+		}
 	},
 
 	trackTimingEvent: function (event) {
+		if (event.type === "timing")  {
 
-		if (event.type = "timing") {
-
-			var duration = Date.now() - event.timestamp
+			let duration = Date.now() - event.timestamp;
 			if (duration > 0) {
 				TPAThePerfectApp.trackTimingEvent(event.category, event.name, duration)
 			}
@@ -55,14 +67,29 @@ module.exports.TPA = {
 	},
 
 	trackTimingEventWithTags: function (event, tags) {
+		if (event.type === "timing")  {
 
-		if (event.type = "timing") {
-
-			var duration = Date.now() - event.timestamp
+			let duration = Date.now() - event.timestamp;
 			if (duration > 0) {
 				TPAThePerfectApp.trackTimingEventWithTags(event.category, event.name, duration, tags)
 			}
 		}
+	},
+
+	// Non Fatal Issues
+
+	reportNonFatalIssue: function (reason = null, userInfoMap = null) {
+		let trace = new Error('').stack || '';
+		let traceLines = trace.split('\n');
+		traceLines.shift();
+		TPAThePerfectApp.reportNonFatalIssue(traceLines.join('\n'), reason, userInfoMap);
+	},
+
+	reportNonFatalIssueWithError: function (error, reason = null, userInfoMap = null) {
+		if (reason == null) {
+			reason = `${error.name}: ${error.message}`;
+		}
+		TPAThePerfectApp.reportNonFatalIssue(error.stack, reason, userInfoMap);
 	},
 
 	// Logging
@@ -73,4 +100,4 @@ module.exports.TPA = {
 
 	}
 
-}
+};
