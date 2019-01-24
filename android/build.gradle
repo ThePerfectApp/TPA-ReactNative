@@ -31,12 +31,13 @@ repositories {
     google()
     jcenter()
     mavenCentral()
-    maven { url "http://nexus.trifork.com/content/repositories/releases" }
+    flatDir {
+        dirs 'libs'
+    }
 }
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'
 
-    api 'io.tpa.tpalib:tpalib:1.7.0'
+    api(name: 'tpalib', ext: 'aar')
 }
-  

@@ -7,28 +7,14 @@ import {
 	NativeModules
 } from 'react-native';
 
-var TPAThePerfectApp = NativeModules.TPAThePerfectApp;
+let TPAThePerfectApp = NativeModules.TPAThePerfectApp;
 
 module.exports.TPA = {
 
-	// AutomaticJSErrorCatching
-	setupAutomaticJSErrorCatching: function () {
-		var defaultHandler = ErrorUtils.getGlobalHandler()
-		ErrorUtils.setGlobalHandler(wrapGlobalHandler); //feed errors directly to our wrapGlobalHandler function
+	// Configuration
 
-		async function wrapGlobalHandler(error, isFatal) {
-			console.log("--------------------------------------")
-			console.log("Error:")
-			console.log(error)
-
-			console.log("---")
-			console.log("isFatal:")
-			console.log(isFatal)
-
-			if (defaultHandler != null) {
-				defaultHandler(error, isFatal); //after you're finished, call the defaultHandler so that react-native also gets the error
-			}
-		}
+	initialize: function(url, projectUuid, configuration) {
+		TPAThePerfectApp.initialize(url, projectUuid, configuration);
 	},
 
 	// Screen tracking
@@ -71,9 +57,9 @@ module.exports.TPA = {
 	},
 
 	trackTimingEvent: function (event) {
-		if (event.type = "timing")  {
+		if (event.type === "timing")  {
 
-			var duration = Date.now() - event.timestamp
+			let duration = Date.now() - event.timestamp;
 			if (duration > 0) {
 				TPAThePerfectApp.trackTimingEvent(event.category, event.name, duration)
 			}
@@ -81,9 +67,9 @@ module.exports.TPA = {
 	},
 
 	trackTimingEventWithTags: function (event, tags) {
-		if (event.type = "timing")  {
+		if (event.type === "timing")  {
 
-			var duration = Date.now() - event.timestamp
+			let duration = Date.now() - event.timestamp;
 			if (duration > 0) {
 				TPAThePerfectApp.trackTimingEventWithTags(event.category, event.name, duration, tags)
 			}
@@ -92,12 +78,18 @@ module.exports.TPA = {
 
 	// Non Fatal Issues
 
-	reportNonFatalIssue: function (stackTraceString = null, reason = null, userInfoMap = null) {
-		if (stackTraceString == null) {
-			return
-		}
+	reportNonFatalIssue: function (reason = null, userInfoMap = null) {
+		let trace = new Error('').stack || '';
+		let traceLines = trace.split('\n');
+		traceLines.shift();
+		TPAThePerfectApp.reportNonFatalIssue(traceLines.join('\n'), reason, userInfoMap);
+	},
 
-		TPAThePerfectApp.reportNonFatalIssue(stackTraceString, reason, userInfoMap);
+	reportNonFatalIssueWithError: function (error, reason = null, userInfoMap = null) {
+		if (reason == null) {
+			reason = `${error.name}: ${error.message}`;
+		}
+		TPAThePerfectApp.reportNonFatalIssue(error.stack, reason, userInfoMap);
 	},
 
 	// Logging
@@ -108,4 +100,4 @@ module.exports.TPA = {
 
 	}
 
-}
+};

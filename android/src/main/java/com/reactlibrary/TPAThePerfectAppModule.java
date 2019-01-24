@@ -1,7 +1,6 @@
 
 package com.reactlibrary;
 
-import android.util.Log;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
@@ -16,9 +15,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.tpa.tpalib.TPA;
+import io.tpa.tpalib.TpaConfiguration;
 import io.tpa.tpalib.analytics.TpaTimingEvent;
 import io.tpa.tpalib.analytics.TpaTracker;
+import io.tpa.tpalib.ext.CrashHandling;
 import io.tpa.tpalib.ext.TpaLog;
+import io.tpa.tpalib.TPACrossPlatformIssueReporting;
+import io.tpa.tpalib.TPASupportedPlatforms;
+import io.tpa.tpalib.lifecycle.AppLifeCycle;
 
 @SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class TPAThePerfectAppModule extends ReactContextBaseJavaModule {
@@ -37,6 +42,97 @@ public class TPAThePerfectAppModule extends ReactContextBaseJavaModule {
     @Override
     public String getName() {
         return "TPAThePerfectApp";
+    }
+
+    // Configuration
+    @ReactMethod
+    public void initialize(String url, String projectUuid, ReadableMap configuration) {
+        TpaConfiguration tpaConfiguration = parseConfiguration(new TpaConfiguration.Builder(projectUuid, url), configuration);
+        TPA.initialize(getReactApplicationContext(), tpaConfiguration);
+        // The timing of TPA initialization can cause the AppLifeCycle to miss the initial onResume
+        // In these cases getCurrentActivity of AppLifeCycle will be null, thus we can detect it and manually call onResume
+        if (AppLifeCycle.getInstance().getCurrentActivity() == null && getCurrentActivity() != null) {
+            AppLifeCycle.getInstance().resumed(getCurrentActivity());
+        }
+    }
+
+    private enum ConfigurationKeys {
+        CrashHandling("crashHandling"),
+        LogType("logType"),
+        FeedbackInvocation("feedbackInvocation"),
+        EnableAutoTrackScreen("enableAutoTrackScreen"),
+        TpaDebugLog("tpaDebugLog");
+
+        private final String jsKey;
+
+        ConfigurationKeys(final String jsKey) {
+            this.jsKey = jsKey;
+        }
+    }
+
+    private TpaConfiguration parseConfiguration(TpaConfiguration.Builder builder, ReadableMap configuration) {
+        if (configuration == null) {
+            return builder.build();
+        }
+
+        if (configuration.hasKey(ConfigurationKeys.CrashHandling.jsKey)) {
+            builder.setCrashHandling(getCrashHandling(configuration.getString(ConfigurationKeys.CrashHandling.jsKey)));
+        }
+
+        if (configuration.hasKey(ConfigurationKeys.LogType.jsKey)) {
+            builder.setLogType(getLogType(configuration.getString(ConfigurationKeys.LogType.jsKey)));
+        }
+
+        if (configuration.hasKey(ConfigurationKeys.FeedbackInvocation.jsKey)) {
+            String jsFeedbackInvocation = configuration.getString(ConfigurationKeys.FeedbackInvocation.jsKey);
+            builder.useShakeFeedback(jsFeedbackInvocation != null && jsFeedbackInvocation.equals("shake"));
+        }
+
+        if (configuration.hasKey(ConfigurationKeys.EnableAutoTrackScreen.jsKey)) {
+            builder.enableAutoTrackScreen(configuration.getBoolean(ConfigurationKeys.EnableAutoTrackScreen.jsKey));
+        }
+
+        if (configuration.hasKey(ConfigurationKeys.TpaDebugLog.jsKey)) {
+            builder.enableDebug(configuration.getBoolean(ConfigurationKeys.TpaDebugLog.jsKey));
+        }
+
+        return builder.build();
+    }
+
+    private CrashHandling getCrashHandling(String jsCrashHandling) {
+        if (jsCrashHandling == null) {
+            return null;
+        }
+
+        switch (jsCrashHandling) {
+            case "disabled":
+                return CrashHandling.DISABLED;
+            case "alwaysAsk":
+                return CrashHandling.ALWAYS_ASK;
+            case "alwaysSend":
+                return CrashHandling.SILENT;
+            default:
+                return null;
+        }
+    }
+
+    private TpaLog.Type getLogType(String jsLogType) {
+        if (jsLogType == null) {
+            return null;
+        }
+
+        switch (jsLogType) {
+            case "none":
+                return TpaLog.Type.NONE;
+            case "console":
+                return TpaLog.Type.LOGCAT;
+            case "remote":
+                return TpaLog.Type.REMOTE;
+            case "both":
+                return TpaLog.Type.BOTH;
+            default:
+                return null;
+        }
     }
 
     //Appearing
@@ -88,9 +184,7 @@ public class TPAThePerfectAppModule extends ReactContextBaseJavaModule {
     //NonFatalIssue
     @ReactMethod
     public void reportNonFatalIssue(String stackTrace, String reason, ReadableMap userInfo) {
-        Log.d("KHL", "reportNonFatalIssue: " + stackTrace + " - " + reason + " - " + String.valueOf(userInfo != null));
-        //TODO: Remember REACT_NATIVE_KIND
-        //TODO: Use 'recursivelyDeconstructReadableMap' for userInfo
+        TPACrossPlatformIssueReporting.reportNonFatalIssue(stackTrace, reason, recursivelyDeconstructReadableMap(userInfo), TPASupportedPlatforms.ReactNative);
     }
 
     //Log
