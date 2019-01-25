@@ -2,8 +2,12 @@
 #import "TPAThePerfectApp.h"
 #import <ThePerfectApp/ThePerfectApp.h>
 #import "TPANonFatalReporting.h"
+#import "TPAReactNativeTimingEvents.h"
 
 @implementation TPAThePerfectApp
+{
+    TPAReactNativeTimingEvents *_timingEventHandler;
+}
 
 NSString * const kCrashHandlingJSKey = @"crashHandling";
 NSString * const kLogTypeJSKey = @"logType";
@@ -22,6 +26,8 @@ RCT_EXPORT_MODULE(TPAThePerfectApp)
 
 RCT_EXPORT_METHOD(initialize:(NSString *)url projectUuid:(NSString *)projectUuid configuration:(NSDictionary *)configuration)
 {
+    _timingEventHandler = [[TPAReactNativeTimingEvents alloc] init];
+    
     id crashHandlingJS = [configuration objectForKey:kCrashHandlingJSKey];
     if (crashHandlingJS != nil) {
         [TPAManager sharedManager].crashReporting = [self getCrashHandling:crashHandlingJS];
@@ -135,15 +141,24 @@ RCT_EXPORT_METHOD(trackEventWithTags:(NSString *)category name:(NSString *)name 
 
 #pragma mark - Duration tracking
 
-RCT_EXPORT_METHOD(trackTimingEvent:(NSString *)category name:(NSString *)name duration:(NSUInteger)duration)
+RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getNewTimingEventIdentifier)
 {
-    [self trackTimingEventWithTags:category name:name duration:duration tags:nil];
+    return [NSUUID UUID].UUIDString;
 }
 
-RCT_EXPORT_METHOD(trackTimingEventWithTags:(NSString *)category name:(NSString *)name duration:(NSUInteger)duration tags:(NSDictionary *)tags)
+RCT_EXPORT_METHOD(startTimingEvent:(NSString *)identifier startTimestamp:(NSUInteger)startTimestamp category:(NSString *)category name:(NSString *)name)
 {
-    id timingEvent = [[TPAManager sharedManager] startTimingEventWithCategory:category name:name];
-    [[TPAManager sharedManager] trackTimingEvent:timingEvent duration:duration tags:tags];
+    [_timingEventHandler startTimingEvent:identifier startTimestamp:startTimestamp category:category name:name];
+}
+
+RCT_EXPORT_METHOD(trackTimingEvent:(NSString *)identifier endTimestamp:(NSUInteger)endTimestamp)
+{
+    [_timingEventHandler trackTimingEvent:identifier endTimestamp:endTimestamp tags:nil];
+}
+
+RCT_EXPORT_METHOD(trackTimingEventWithTags:(NSString *)identifier endTimestamp:(NSUInteger)endTimestamp tags:(NSDictionary *)tags)
+{
+    [_timingEventHandler trackTimingEvent:identifier endTimestamp:endTimestamp tags:tags];
 }
 
 #pragma mark - Non Fatal Issues

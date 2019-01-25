@@ -1,6 +1,6 @@
-export type CrashHandling = 'disabled'|'alwaysAsk'|'alwaysSend';
-export type LogType = 'none'|'console'|'remote'|'both';
-export type FeedbackInvocation = 'disabled'|'enabled'|'shake';
+type CrashHandling = 'disabled'|'alwaysAsk'|'alwaysSend';
+type LogType = 'none'|'console'|'remote'|'both';
+type FeedbackInvocation = 'disabled'|'enabled'|'shake';
 
 /**
  * Configuration interface. Used for configuring TPA in {@link TPA#initialize}.
@@ -12,7 +12,7 @@ export type FeedbackInvocation = 'disabled'|'enabled'|'shake';
  *  - {@link isSessionRecordingEnabled isSessionRecordingEnabled}
  *  - {@link tpaDebugLog tpaDebugLog}
  */
-export interface Configuration {
+interface Configuration {
     /**
      * Determines how crashes are handled.
      * Possible values are:
@@ -60,14 +60,7 @@ export interface Configuration {
     tpaDebugLog?: boolean;
 }
 
-export type TimingEvent = {
-    type: "timing";
-    category: string;
-    name: string;
-    timestamp: number;
-};
-
-export class TPA {
+interface TPAInterface {
     // Configuration
 
     /**
@@ -85,7 +78,7 @@ export class TPA {
      * @param projectUuid - The project UUID for your TPA project. Keep in mind that this will differ based on the platform. Use Platform.select(...) to easily configure your app based on the platform.
      * @param configuration - The configurations for your app, if set to nil all defaults will be used.
      */
-    static initialize(url: string, projectUuid: string, configuration?: Configuration): void;
+    initialize(url: string, projectUuid: string, configuration?: Configuration): void;
 
     // Screen Tracking
 
@@ -101,7 +94,7 @@ export class TPA {
      * }
      * @param title - the title of the screen, typically the name of a component.
      */
-    static trackScreenAppearing(title: string): void;
+    trackScreenAppearing(title: string): void;
 
     /**
      * Track a screen appearing with additional tags. Tags can be useful for filtering your events. This will typically be called from your component's componentDidMount function.
@@ -116,7 +109,7 @@ export class TPA {
      * @param title - the title of the screen, typically the name of a component.
      * @param tags - an object containing tags, only string values are supported. Important: Do NOT include personal data in your tags.
      */
-    static trackScreenAppearingWithTags(title: string, tags: { [key: string]: string }): void;
+    trackScreenAppearingWithTags(title: string, tags: { [key: string]: string }): void;
 
     /**
      * Track a screen disappearing. This will typically be called from your component's componentWillUnmount function.
@@ -130,7 +123,7 @@ export class TPA {
      * }
      * @param title - the title of the screen, typically the name of a component.
      */
-    static trackScreenDisappearing(title: string): void;
+    trackScreenDisappearing(title: string): void;
 
     /**
      * Track a screen disappearing with additional tags. Tags can be useful for filtering your events. This will typically be called from your component's componentWillUnmount function.
@@ -145,7 +138,7 @@ export class TPA {
      * @param title - the title of the screen, typically the name of a component.
      * @param tags - an object containing tags, only string values are supported. Important: Do NOT include personal data in your tags.
      */
-    static trackScreenDisappearingWithTags(title: string, tags: { [key: string]: string }): void;
+    trackScreenDisappearingWithTags(title: string, tags: { [key: string]: string }): void;
 
     // Event tracking
 
@@ -156,7 +149,7 @@ export class TPA {
      * @param category - the category of the event.
      * @param name - the name of the event.
      */
-    static trackEvent(category: string, name: string): void;
+    trackEvent(category: string, name: string): void;
 
     /**
      * Track an event with a category and tags. All events with the same category will be grouped on TPA. Tags can be useful for filtering your events.
@@ -166,16 +159,38 @@ export class TPA {
      * @param name - the name of the event.
      * @param tags - an object containing tags, only string values are supported. Important: Do NOT include personal data in your tags.
      */
-    static trackEventWithTags(category: string, name: string, tags: { [key: string]: string }): void;
+    trackEventWithTags(category: string, name: string, tags: { [key: string]: string }): void;
 
     // Duration tracking
 
-    //TODO Fix timing events and add docs
-    static startTimingEvent(category: string, name: string): TimingEvent;
+    /**
+     * Start a timing event that can later be tracked to TPA.
+     * @param category - the category of the event.
+     * @param name - the name of the event.
+     * @returns the identifier of the event, this is later used to complete the tracking with {@link trackTimingEvent} or {@link trackTimingEventWithTags}.
+     */
+    startTimingEvent(category: string, name: string): string;
 
-    static trackTimingEvent(event: TimingEvent): void;
+    /**
+     * Track a timing event with an identifier. The identifier is acquired from {@link startTimingEvent}.
+     * @example
+     * const identifier = TPA.startTimingEvent('My Category', 'Custom Event');
+     * // Your code
+     * TPA.trackTimingEvent(identifier);
+     * @param identifier - the identifier previously acquired from {@link startTimingEvent}.
+     */
+    trackTimingEvent(identifier: string): void;
 
-    static trackTimingEventWithTags(event: TimingEvent, tags: { [key: string]: string }): void;
+    /**
+     * Track a timing with an identifier and additional tags. The identifier is acquired from {@link startTimingEvent}. Tags can be useful for filtering your events.
+     * @example
+     * const identifier = TPA.startTimingEvent('My Category', 'Custom Event');
+     * // Your code
+     * TPA.trackTimingEventWithTags(identifier, {'My Tag':'Value'});
+     * @param identifier - the identifier previously acquired fro {@link startTimingEvent}.
+     * @param tags - an object containing tags, only string values are supported. Important: Do NOT include personal data in your tags.
+     */
+    trackTimingEventWithTags(identifier: string, tags: { [key: string]: string }): void;
 
     // Non fatal issues
     /**
@@ -191,7 +206,7 @@ export class TPA {
      * @param reason - reason for the issue. TPA will group non-fatal issues based on this regardless of the underlying stacktrace.
      * @param userInfoMap - json object with additional information. Will be included in the issue log on TPA.
      */
-    static reportNonFatalIssue(reason?: string, userInfoMap?: { [key: string]: any }): void;
+    reportNonFatalIssue(reason?: string, userInfoMap?: { [key: string]: any }): void;
 
     /**
      * Log a non-fatal issue with an error and an optional reason and userInfoMap. This is helpful for logging caught errors that still cause the app to end up in a broken state.
@@ -206,7 +221,7 @@ export class TPA {
      * @param reason - reason for the issue. TPA will group non-fatal issues based on this regardless of the underlying stacktrace.
      * @param userInfoMap - json object with additional information. Will be included in the issue log on TPA.
      */
-    static reportNonFatalIssueWithError(error: Error, reason?: string, userInfoMap?: { [key: string]: any }): void;
+    reportNonFatalIssueWithError(error: Error, reason?: string, userInfoMap?: { [key: string]: any }): void;
 
     // Feedback
 
@@ -214,10 +229,12 @@ export class TPA {
      * Capture a screenshot of the current screen and allow the user to draw on it as well as include a message before sending it to TPA.
      * Does nothing if {@link Configuration#feedbackInvocation} is 'disabled'.
      */
-    static startFeedback(): void;
+    startFeedback(): void;
 
     // Logging
 
     //TODO Fix logging and add docs
-    static logDebug(message: string): void;
+    logDebug(message: string): void;
 }
+
+export const TPA: TPAInterface;
