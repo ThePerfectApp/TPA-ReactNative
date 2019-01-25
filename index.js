@@ -167,33 +167,41 @@ module.exports.TPA = {
 
 	// Duration tracking
 
+	/**
+	 * Start a timing event that can later be tracked to TPA.
+	 * @param {string} category - the category of the event.
+	 * @param {string} name - the name of the event.
+	 * @returns {string} the identifier of the event, this is later used to complete the tracking with {@link trackTimingEvent} or {@link trackTimingEventWithTags}.
+	 */
 	startTimingEvent: function (category, name) {
-		return {
-			type: "timing",
-			category: category,
-			name: name,
-			timestamp: Date.now()
-		}
+		let identifier = TPAThePerfectApp.getNewTimingEventIdentifier();
+		TPAThePerfectApp.startTimingEvent(identifier, Date.now(), category, name);
+		return identifier;
 	},
 
-	trackTimingEvent: function (event) {
-		if (event.type === "timing")  {
-
-			let duration = Date.now() - event.timestamp;
-			if (duration > 0) {
-				TPAThePerfectApp.trackTimingEvent(event.category, event.name, duration)
-			}
-		}
+	/**
+	 * Track a timing event with an identifier. The identifier is acquired from {@link startTimingEvent}.
+	 * @example
+	 * const identifier = TPA.startTimingEvent('My Category', 'Custom Event');
+	 * // Your code
+	 * TPA.trackTimingEvent(identifier);
+	 * @param {string} identifier - the identifier previously acquired from {@link startTimingEvent}.
+	 */
+	trackTimingEvent: function (identifier) {
+		TPAThePerfectApp.trackTimingEvent(identifier, Date.now());
 	},
 
-	trackTimingEventWithTags: function (event, tags) {
-		if (event.type === "timing")  {
-
-			let duration = Date.now() - event.timestamp;
-			if (duration > 0) {
-				TPAThePerfectApp.trackTimingEventWithTags(event.category, event.name, duration, tags)
-			}
-		}
+	/**
+	 * Track a timing with an identifier and additional tags. The identifier is acquired from {@link startTimingEvent}. Tags can be useful for filtering your events.
+	 * @example
+	 * const identifier = TPA.startTimingEvent('My Category', 'Custom Event');
+	 * // Your code
+	 * TPA.trackTimingEventWithTags(identifier, {'My Tag':'Value'});
+	 * @param {string} identifier - the identifier previously acquired fro {@link startTimingEvent}.
+	 * @param {string} tags - an object containing tags, only string values are supported. Important: Do NOT include personal data in your tags.
+	 */
+	trackTimingEventWithTags: function (identifier, tags) {
+		TPAThePerfectApp.trackTimingEventWithTags(identifier, Date.now(), tags);
 	},
 
 	// Non Fatal Issues

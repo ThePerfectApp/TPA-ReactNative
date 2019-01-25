@@ -10,14 +10,15 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.ReadableType;
 import com.reactlibrary.configuration.TPAReactNativeConfiguration;
+import com.reactlibrary.timingevents.ReactNativeTimingEvents;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import io.tpa.tpalib.TPA;
-import io.tpa.tpalib.analytics.TpaTimingEvent;
 import io.tpa.tpalib.analytics.TpaTracker;
 import io.tpa.tpalib.ext.TpaLog;
 import io.tpa.tpalib.TPACrossPlatformIssueReporting;
@@ -32,6 +33,8 @@ public class TPAThePerfectAppModule extends ReactContextBaseJavaModule {
     private static final String REACT_NATIVE_KIND = "ReactNative";
 
     private final ReactApplicationContext reactContext;
+
+    private ReactNativeTimingEvents reactNativeTimingEvents;
 
     public TPAThePerfectAppModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -48,6 +51,7 @@ public class TPAThePerfectAppModule extends ReactContextBaseJavaModule {
     public void initialize(String url, String projectUuid, ReadableMap configuration) {
         TPAReactNativeConfiguration.getInstance().configure(url, projectUuid, configuration);
         TPA.initialize(getReactApplicationContext(), TPAReactNativeConfiguration.getInstance().getTpaConfiguration());
+        reactNativeTimingEvents = new ReactNativeTimingEvents();
         // The timing of TPA initialization can cause the AppLifeCycle to miss the initial onResume
         // In these cases getCurrentActivity of AppLifeCycle will be null, thus we can detect it and manually call onResume
         if (AppLifeCycle.getInstance().getCurrentActivity() == null && getCurrentActivity() != null) {
@@ -138,25 +142,37 @@ public class TPAThePerfectAppModule extends ReactContextBaseJavaModule {
     //endregion
 
     //region Timing Event
-    @ReactMethod
-    public void trackTimingEvent(final String category, final String name, final Integer duration) {
-        performTrackingAction(new TrackingAction() {
-            @Override
-            public void track() {
-                TpaTimingEvent tpaTimingEvent = TpaTracker.startTimingEvent(category, name);
-                TpaTracker.trackTimingEvent(tpaTimingEvent, duration);
-            }
-        });
-
+    @ReactMethod(isBlockingSynchronousMethod=true)
+    public String getNewTimingEventIdentifier() {
+        return UUID.randomUUID().toString();
     }
 
     @ReactMethod
-    public void trackTimingEventWithTags(final String category, final String name, final Integer duration, final ReadableMap tags) {
+    public void startTimingEvent(final String identifier, final Integer startTimestamp, final String category, final String name) {
         performTrackingAction(new TrackingAction() {
             @Override
             public void track() {
-                TpaTimingEvent tpaTimingEvent = TpaTracker.startTimingEvent(category, name, recursivelyDeconstructReadableMapString(tags));
-                TpaTracker.trackTimingEvent(tpaTimingEvent, duration);
+                reactNativeTimingEvents.startTimingEvent(identifier, startTimestamp, category, name);
+            }
+        });
+    }
+
+    @ReactMethod
+    public void trackTimingEvent(final String identifier, final Integer endTimestamp) {
+        performTrackingAction(new TrackingAction() {
+            @Override
+            public void track() {
+                reactNativeTimingEvents.trackTimingEvent(identifier, endTimestamp, null);
+            }
+        });
+    }
+
+    @ReactMethod
+    public void trackTimingEventWithTags(final String identifier, final Integer endTimestamp, final ReadableMap tags) {
+        performTrackingAction(new TrackingAction() {
+            @Override
+            public void track() {
+                reactNativeTimingEvents.trackTimingEvent(identifier, endTimestamp, recursivelyDeconstructReadableMapString(tags));
             }
         });
     }
