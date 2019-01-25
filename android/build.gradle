@@ -31,6 +31,10 @@ repositories {
     google()
     jcenter()
     mavenCentral()
+    maven {
+        // This is to support development, latest version of android lib available outside of the npm package is 0.20.0.
+        url "$rootDir/../node_modules/react-native/android"
+    }
     flatDir {
         dirs 'libs'
     }
