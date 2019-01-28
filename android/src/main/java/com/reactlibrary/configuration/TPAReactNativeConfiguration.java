@@ -29,7 +29,7 @@ public class TPAReactNativeConfiguration {
     private CrashHandling crashHandling = CrashHandling.DISABLED;
     private TpaLog.Type logType = TpaLog.Type.NONE;
     private FeedbackInvocation feedbackInvocation = FeedbackInvocation.Disabled;
-    private boolean isAnalyticsEnabled = false;
+    private boolean isAnalyticsEnabled = true;
     private boolean tpaDebugLog = false;
     //endregion
 
