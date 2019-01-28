@@ -237,7 +237,7 @@ module.exports.TPA = {
 	 * }
 	 * @param {Error} error - the caught error.
 	 * @param {(string|null)=} reason - reason for the issue. TPA will group non-fatal issues based on this regardless of the underlying stacktrace.
-	 * @param {(string|null)=} userInfoMap - json object with additional information. Will be included in the issue log on TPA.
+	 * @param {(Object|null)=} userInfoMap - json object with additional information. Will be included in the issue log on TPA.
 	 */
 	reportNonFatalIssueWithError: function (error, reason = null, userInfoMap = null) {
 		if (reason == null) {
