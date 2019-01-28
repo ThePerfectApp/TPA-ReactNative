@@ -258,8 +258,12 @@ module.exports.TPA = {
 
 	// Logging
 
+	/**
+	 * Write a debug log line to your chosen TPA logging destinations.
+	 * @param {string} message - the message to log
+	 * @see LogType
+	 */
 	logDebug: function (message) {
-
 		TPAThePerfectApp.logDebug(message)
 
 	}

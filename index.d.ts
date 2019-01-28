@@ -233,7 +233,11 @@ interface TPAInterface {
 
     // Logging
 
-    //TODO Fix logging and add docs
+    /**
+     * Write a debug log line to your chosen TPA logging destinations.
+     * @param {string} message - the message to log
+     * @see Configuration.logType
+     */
     logDebug(message: string): void;
 }
 
