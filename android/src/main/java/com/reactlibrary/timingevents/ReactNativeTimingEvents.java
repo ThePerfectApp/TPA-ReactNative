@@ -38,6 +38,6 @@ public class ReactNativeTimingEvents {
     }
 
     private long getDuration(long start, long end) {
-        return Math.abs(end - start);
+        return start > end ? start - end : end - start;
     }
 }

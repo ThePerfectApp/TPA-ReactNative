@@ -148,31 +148,31 @@ public class TPAThePerfectAppModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void startTimingEvent(final String identifier, final Integer startTimestamp, final String category, final String name) {
+    public void startTimingEvent(final String identifier, final Double startTimestamp, final String category, final String name) {
         performTrackingAction(new TrackingAction() {
             @Override
             public void track() {
-                reactNativeTimingEvents.startTimingEvent(identifier, startTimestamp, category, name);
+                reactNativeTimingEvents.startTimingEvent(identifier, startTimestamp.longValue(), category, name);
             }
         });
     }
 
     @ReactMethod
-    public void trackTimingEvent(final String identifier, final Integer endTimestamp) {
+    public void trackTimingEvent(final String identifier, final Double endTimestamp) {
         performTrackingAction(new TrackingAction() {
             @Override
             public void track() {
-                reactNativeTimingEvents.trackTimingEvent(identifier, endTimestamp, null);
+                reactNativeTimingEvents.trackTimingEvent(identifier, endTimestamp.longValue(), null);
             }
         });
     }
 
     @ReactMethod
-    public void trackTimingEventWithTags(final String identifier, final Integer endTimestamp, final ReadableMap tags) {
+    public void trackTimingEventWithTags(final String identifier, final Double endTimestamp, final ReadableMap tags) {
         performTrackingAction(new TrackingAction() {
             @Override
             public void track() {
-                reactNativeTimingEvents.trackTimingEvent(identifier, endTimestamp, recursivelyDeconstructReadableMapString(tags));
+                reactNativeTimingEvents.trackTimingEvent(identifier, endTimestamp.longValue(), recursivelyDeconstructReadableMapString(tags));
             }
         });
     }
