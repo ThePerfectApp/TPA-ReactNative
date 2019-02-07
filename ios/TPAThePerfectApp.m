@@ -10,11 +10,15 @@
 }
 
 NSString * const kCrashHandlingJSKey = @"crashHandling";
-NSString * const kLogTypeJSKey = @"logType";
+NSString * const kLoggingDestinationJSKey = @"loggingDestination";
+NSString * const kMinimumLogLevelConsoleJSKey = @"minimumLogLevelConsole";
+NSString * const kMinimumLogLevelRemoteJSKey = @"minimumLogLevelRemote";
 NSString * const kAnalyticsEnabledJSKey = @"isAnalyticsEnabled";
 NSString * const kSessionRecordingJSKey = @"isSessionRecordingEnabled";
 NSString * const kFeedbackInvocationJSKey = @"feedbackInvocation";
 NSString * const kTpaDebugLoggingJSKey = @"tpaDebugLog";
+NSString * const kIsNonFatalIssuesEnabledJSKey = @"isNonFatalIssuesEnabled";
+NSString * const kUpdateNotificationJSKey = @"updateNotification";
 
 - (dispatch_queue_t)methodQueue
 {
@@ -30,35 +34,50 @@ RCT_EXPORT_METHOD(initialize:(NSString *)url projectUuid:(NSString *)projectUuid
     
     id crashHandlingJS = [configuration objectForKey:kCrashHandlingJSKey];
     if (crashHandlingJS != nil) {
-        [TPAManager sharedManager].crashReporting = [self getCrashHandling:crashHandlingJS];
+        [TPA shared].crashReporting = [self getCrashHandling:crashHandlingJS];
     }
     
-    id loggingDestinationJS = [configuration objectForKey:kLogTypeJSKey];
+    id loggingDestinationJS = [configuration objectForKey:kLoggingDestinationJSKey];
     if (loggingDestinationJS != nil) {
-        [TPAManager sharedManager].loggingDestinations = [self getLoggingDestination:loggingDestinationJS];
+        [TPA shared].loggingDestinations = [self getLoggingDestination:loggingDestinationJS];
     }
     
-    id analyticsEnabledJS = [configuration objectForKey:kAnalyticsEnabledJSKey];
-    if (analyticsEnabledJS != nil) {
-        [TPAManager sharedManager].analyticsEnabled = (BOOL)analyticsEnabledJS;
+    id minimumLogLevelConsoleJS = [configuration objectForKey:kMinimumLogLevelConsoleJSKey];
+    if (minimumLogLevelConsoleJS != nil) {
+        [TPA shared].consoleLogLevel = [self getLogLevel:minimumLogLevelConsoleJS];
     }
     
-    id sessionRecordingEnabledJS = [configuration objectForKey:kSessionRecordingJSKey];
-    if (sessionRecordingEnabledJS != nil) {
-        [TPAManager sharedManager].sessionRecordingEnabled = (BOOL)sessionRecordingEnabledJS;
+    id minimumLogLevelRemoteJS = [configuration objectForKey:kMinimumLogLevelRemoteJSKey];
+    if (minimumLogLevelRemoteJS != nil) {
+        [TPA shared].remoteLogLevel = [self getLogLevel:minimumLogLevelRemoteJS];
     }
     
     id feedbackInvocationJS = [configuration objectForKey:kFeedbackInvocationJSKey];
     if (feedbackInvocationJS != nil) {
-        [TPAManager sharedManager].feedbackInvocation = [self getFeedbackInvocation:feedbackInvocationJS];
+        [TPA shared].feedbackInvocation = [self getFeedbackInvocation:feedbackInvocationJS];
+    }
+    
+    id analyticsEnabledJS = [configuration objectForKey:kAnalyticsEnabledJSKey];
+    if (analyticsEnabledJS != nil) {
+        [TPA shared].analyticsEnabled = (BOOL)analyticsEnabledJS;
     }
     
     id debugLoggingEnabled = [configuration objectForKey:kTpaDebugLoggingJSKey];
     if (debugLoggingEnabled != nil) {
-        [TPAManager sharedManager].debugLoggingEnabled = (BOOL)debugLoggingEnabled;
+        [TPA shared].tpaDebugLoggingEnabled = (BOOL)debugLoggingEnabled;
     }
     
-    [[TPAManager sharedManager] startManagerWithBaseUrl:url projectUuid:projectUuid];
+    id isNonFatalIssuesEnabledJS = [configuration objectForKey:kIsNonFatalIssuesEnabledJSKey];
+    if (isNonFatalIssuesEnabledJS != nil) {
+        [TPA shared].nonFatalEnabled = (BOOL)isNonFatalIssuesEnabledJS;
+    }
+    
+    id updateNotificationJS = [configuration objectForKey:kUpdateNotificationJSKey];
+    if (updateNotificationJS != nil) {
+        [[TPA shared] setUpdateNotification:[self getUpdateNotification:updateNotificationJS]];
+    }
+    
+    [[TPA shared] startWithBaseUrl:url projectUuid:projectUuid];
 }
 
 - (TPACrashReporting)getCrashHandling:(id)crashHandlingJS
@@ -88,7 +107,23 @@ RCT_EXPORT_METHOD(initialize:(NSString *)url projectUuid:(NSString *)projectUuid
             return TPALoggingDestinationConsole|TPALoggingDestinationRemote;
         }
     }
-    return TPALoggingDestinationNone;
+    return TPALoggingDestinationConsole;
+}
+
+- (TPALogLevel)getLogLevel:(id)logLevelJS
+{
+    if ([logLevelJS respondsToSelector:@selector(isEqualToString:)]) {
+        if ([logLevelJS isEqualToString:@"debug"]) {
+            return TPALogLevelDebug;
+        } else if ([logLevelJS isEqualToString:@"info"]) {
+            return TPALogLevelInfo;
+        } else if ([logLevelJS isEqualToString:@"warning"]) {
+            return TPALogLevelWarning;
+        } else if ([logLevelJS isEqualToString:@"error"]) {
+            return TPALogLevelError;
+        }
+    }
+    return TPALogLevelDebug;
 }
 
 - (TPAFeedbackInvocation)getFeedbackInvocation:(id)feedbackInvocationJS
@@ -105,38 +140,52 @@ RCT_EXPORT_METHOD(initialize:(NSString *)url projectUuid:(NSString *)projectUuid
     return TPAFeedbackInvocationDisabled;
 }
 
+- (TPAUpdateNotification)getUpdateNotification:(id)updateNotificationJS
+{
+    if ([updateNotificationJS respondsToSelector:@selector(isEqualToString:)]) {
+        if ([updateNotificationJS isEqualToString:@"disabled"]) {
+            return TPAUpdateNotificationDisabled;
+        } else if ([updateNotificationJS isEqualToString:@"manually"]) {
+            return TPAUpdateNotificationManually;
+        } else if ([updateNotificationJS isEqualToString:@"automatic"]) {
+            return TPAUpdateNotificationAutomatic;
+        }
+    }
+    return TPAUpdateNotificationDisabled;
+}
+
 #pragma mark - Screen tracking
 
 RCT_EXPORT_METHOD(trackScreenAppearing:(NSString *)title)
 {
-    [[TPAManager sharedManager] trackScreenAppearing:title];
+    [[TPA shared] trackScreenAppearing:title];
 }
 
 RCT_EXPORT_METHOD(trackScreenAppearingWithTags:(NSString *)title tags:(NSDictionary *)tags)
 {
-    [[TPAManager sharedManager] trackScreenAppearing:title tags:tags];
+    [[TPA shared] trackScreenAppearing:title tags:tags];
 }
 
 RCT_EXPORT_METHOD(trackScreenDisappearing:(NSString *)title)
 {
-    [[TPAManager sharedManager] trackScreenDisappearing:title];
+    [[TPA shared] trackScreenDisappearing:title];
 }
 
 RCT_EXPORT_METHOD(trackScreenDisappearingWithTags:(NSString *)title tags:(NSDictionary *)tags)
 {
-    [[TPAManager sharedManager] trackScreenDisappearing:title tags:tags];
+    [[TPA shared] trackScreenDisappearing:title tags:tags];
 }
 
 #pragma mark - Event tracking
 
 RCT_EXPORT_METHOD(trackEvent:(NSString *)category name:(NSString *)name)
 {
-    [[TPAManager sharedManager] trackEventWithCategory:category name:name];
+    [[TPA shared] trackEventWithCategory:category name:name];
 }
 
 RCT_EXPORT_METHOD(trackEventWithTags:(NSString *)category name:(NSString *)name tags:(NSDictionary *)tags)
 {
-    [[TPAManager sharedManager] trackEventWithCategory:category name:name tags:tags];
+    [[TPA shared] trackEventWithCategory:category name:name tags:tags];
 }
 
 #pragma mark - Duration tracking
@@ -172,15 +221,22 @@ RCT_EXPORT_METHOD(reportNonFatalIssue:(NSString *)stackTrace reason:(NSString *)
 
 RCT_EXPORT_METHOD(startFeedback)
 {
-    [[TPAManager sharedManager] invokeFeedback];
+    [[TPA shared] invokeFeedback];
 }
 
 #pragma mark - Logging
 
-RCT_EXPORT_METHOD(logDebug:(NSString *)message)
+RCT_EXPORT_METHOD(log:(NSString *)logLevel message:(NSString *)message)
 {
-    [[TPAManager sharedManager] logMessage:message];
+    if ([logLevel isEqualToString:@"debug"]) {
+        [[TPA shared] log:TPALogLevelDebug message:message];
+    } else if ([logLevel isEqualToString:@"info"]) {
+        [[TPA shared] log:TPALogLevelInfo message:message];
+    } else if ([logLevel isEqualToString:@"warning"]) {
+        [[TPA shared] log:TPALogLevelWarning message:message];
+    } else if ([logLevel isEqualToString:@"error"]) {
+        [[TPA shared] log:TPALogLevelError message:message];
+    }
 }
-
 
 @end

@@ -29,8 +29,12 @@ module.exports.TPA = {
 	 *  'console'   - logs are logged in the console
 	 *  'remote'    - logs are sent to TPA
 	 *  'both'      - combines 'console' and 'remote' logging
-	 * @typedef {('none'|'console'|'remote'|'both')} LogType
+	 * @typedef {('none'|'console'|'remote'|'both')} LoggingDestination
 	 * @default 'none'
+	 */
+
+	/**
+	 * @typedef {('debug'|'info'|'warning'|'error')} LogLevel
 	 */
 
 	/**
@@ -44,13 +48,29 @@ module.exports.TPA = {
 	 */
 
 	/**
+	 * Determines how update notifications are handled.
+	 * Possible values are:
+	 * 	'disabled'  - Update notification are disabled. Calls to checkForUpdate are ignored.
+	 *  'enabled'   - Update notification are enabled. Call checkForUpdate to receive a notification if there is an update available.
+	 *  'automatic' - Update notification are enabled. User will automatically be notified when an update is available.
+	 * Note: On Android update notifications are dependent on the TPALib Distribution library, thus this will function differently.
+	 * An app WITHOUT the TPALib Distribution library will always behave as if this flag is set to 'disabled'.
+	 * An app WITH the TPALib Distribution library will behave as if this flag is 'enabled' and automatic update notification will appear if it is set to 'automatic'.
+	 * @typedef {('disabled'|'manually'|'automatic')} UpdateNotification
+	 * @default 'disabled
+	 */
+
+	/**
 	 * @interface Configuration
 	 * @property {CrashHandling} [crashHandling] - Determines how crashes are handled.
-	 * @property {LogType} [logType] - Determines where log messages are sent.
+	 * @property {LoggingDestination} [loggingDestination] - Determines where log messages are sent.
+	 * @property {LogLevel} [minimumLogLevelConsole] - Sets the minimum log level that will be output to the console.
+	 * @property {LogLevel} [minimumLogLevelRemote] - Set the minimum log level that will be sent to TPA.
 	 * @property {FeedbackInvocation} [feedbackInvocation] - Determines how feedback invocations are handled.
-	 * @property {boolean} isAnalyticsEnabled - Determines if tracking events are sent to TPA.
-	 * @property {boolean} isSessionRecordingEnabled - Determines if start and end session events are send to TPA. These include basic device information. If disabled logging events are not reported to TPA even if {@link logType} is set to 'remote'. Important: This flag does nothing on Android.
-	 * @property {boolean} tpaDebugLog - When true the TPA library will output additional debug logging. This can be helpful for debugging issues with your TPA configuration.
+	 * @property {boolean} [isAnalyticsEnabled] - Determines if analytics data is sent to TPA.
+	 * @property {boolean} [tpaDebugLog] - When true the TPA library will output additional debug logging. This can be helpful for debugging issues with your TPA configuration.
+	 * @property {boolean} [isNonFatalIssuesEnabled] - Determines if non-fatal issues are sent to TPA.
+	 * @property {UpdateNotification} [updateNotification] - Determines how to check for update notifications.
 	 */
 
 	/**
@@ -58,11 +78,14 @@ module.exports.TPA = {
 	 * @example Configuration shown with default values
 	 * TPA.initialize('https://mytpainstance.tpa.io/', Platform.select({ios:'iOSProjectUUID', android:'AndroidProjectUUID'}), {
 	 *      crashHandling: 'disabled',
-	 *      logType: 'none',
+	 *      loggingDestination: 'console',
+	 *      minimumLogLevelConsole: 'debug',
+	 *      minimumLogLevelRemote: 'debug',
 	 *      feedbackInvocation: 'disabled',
-	 *      isAnalyticsEnabled: true,
-	 *      isSessionRecordingEnabled: false,
-	 *      tpaDebugLog: false
+	 *      isAnalyticsEnabled: false,
+	 *      tpaDebugLog: false,
+	 *      isNonFatalIssuesEnabled: false,
+	 *      updateNotification: 'disabled'
 	 * });
 	 * @param {string} url - the base url to your TPA server. Can be found on the main page of your project.
 	 * @param {string} projectUuid - The project UUID for your TPA project. Keep in mind that this will differ based on the platform. Use Platform.select(...) to easily configure your app based on the platform.
@@ -258,14 +281,38 @@ module.exports.TPA = {
 
 	// Logging
 
-	/**
-	 * Write a debug log line to your chosen TPA logging destinations.
-	 * @param {string} message - the message to log
-	 * @see LogType
-	 */
-	logDebug: function (message) {
-		TPAThePerfectApp.logDebug(message)
+	log: {
+		/**
+		 * Write a debug log line to your chosen {@link Configuration#loggingDestination logging destinations}.
+		 * @param {string} message - the log line to write.
+		 */
+		debug: function (message) {
+			TPAThePerfectApp.log('debug', message);
+		},
 
+		/**
+		 * Write an info log line to your chosen {@link Configuration#loggingDestination logging destinations}.
+		 * @param {string} message - the log line to write.
+		 */
+		info: function (message) {
+			TPAThePerfectApp.log('info', message);
+		},
+
+		/**
+		 * Write a warning log line to your chosen {@link Configuration#loggingDestination logging destinations}.
+		 * @param {string} message - the log line to write.
+		 */
+		warning: function (message) {
+			TPAThePerfectApp.log('warning', message);
+		},
+
+		/**
+		 * Write an error log line to your chosen {@link Configuration#loggingDestination logging destinations}.
+		 * @param {string} message - the log line to write.
+		 */
+		error: function (message) {
+			TPAThePerfectApp.log('error', message);
+		}
 	}
 
 };

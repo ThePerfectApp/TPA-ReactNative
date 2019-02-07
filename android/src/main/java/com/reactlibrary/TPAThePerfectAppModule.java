@@ -19,11 +19,9 @@ import java.util.Map;
 import java.util.UUID;
 
 import io.tpa.tpalib.TPA;
-import io.tpa.tpalib.analytics.TpaTracker;
-import io.tpa.tpalib.ext.TpaLog;
 import io.tpa.tpalib.TPACrossPlatformIssueReporting;
+import io.tpa.tpalib.TPACrossPlatformLifeCycle;
 import io.tpa.tpalib.TPASupportedPlatforms;
-import io.tpa.tpalib.lifecycle.AppLifeCycle;
 
 @SuppressWarnings({"FieldCanBeLocal", "unused"})
 public class TPAThePerfectAppModule extends ReactContextBaseJavaModule {
@@ -49,13 +47,12 @@ public class TPAThePerfectAppModule extends ReactContextBaseJavaModule {
     //region Configuration
     @ReactMethod
     public void initialize(String url, String projectUuid, ReadableMap configuration) {
-        TPAReactNativeConfiguration.getInstance().configure(url, projectUuid, configuration);
-        TPA.initialize(getReactApplicationContext(), TPAReactNativeConfiguration.getInstance().getTpaConfiguration());
+        TPA.initialize(getReactApplicationContext(), new TPAReactNativeConfiguration(url, projectUuid).parseConfiguration(configuration));
         reactNativeTimingEvents = new ReactNativeTimingEvents();
         // The timing of TPA initialization can cause the AppLifeCycle to miss the initial onResume
         // In these cases getCurrentActivity of AppLifeCycle will be null, thus we can detect it and manually call onResume
-        if (AppLifeCycle.getInstance().getCurrentActivity() == null && getCurrentActivity() != null) {
-            AppLifeCycle.getInstance().resumed(getCurrentActivity());
+        if (getCurrentActivity() != null) {
+            TPACrossPlatformLifeCycle.initLifecycle(getCurrentActivity());
         }
     }
     //endregion
@@ -65,79 +62,39 @@ public class TPAThePerfectAppModule extends ReactContextBaseJavaModule {
         void track();
     }
 
-    private void performTrackingAction(TrackingAction trackingAction) {
-        if (TPAReactNativeConfiguration.getInstance().isAnalyticsEnabled()) {
-            trackingAction.track();
-        }
-    }
-
     //region Appearing
     @ReactMethod
     public void trackScreenAppearing(final String title) {
-        performTrackingAction(new TrackingAction() {
-            @Override
-            public void track() {
-                TpaTracker.trackScreenAppearing(title);
-            }
-        });
+        TPA.trackScreenAppearing(title);
     }
 
     @ReactMethod
     public void trackScreenAppearingWithTags(final String title, final ReadableMap tags) {
-        performTrackingAction(new TrackingAction() {
-            @Override
-            public void track() {
-                TpaTracker.trackScreenAppearing(title, recursivelyDeconstructReadableMapString(tags));
-            }
-        });
-
+        TPA.trackScreenAppearing(title, recursivelyDeconstructReadableMapString(tags));
     }
     //endregion
 
     //region Disappearing
     @ReactMethod
     public void trackScreenDisappearing(final String title) {
-        performTrackingAction(new TrackingAction() {
-            @Override
-            public void track() {
-                TpaTracker.trackScreenDisappearing(title);
-            }
-        });
+        TPA.trackScreenDisappearing(title);
     }
 
     @ReactMethod
     public void trackScreenDisappearingWithTags(final String title, final ReadableMap tags) {
-        performTrackingAction(new TrackingAction() {
-            @Override
-            public void track() {
-                TpaTracker.trackScreenDisappearing(title, recursivelyDeconstructReadableMapString(tags));
-            }
-        });
-
+        TPA.trackScreenDisappearing(title, recursivelyDeconstructReadableMapString(tags));
     }
     //endregion
 
     //region Event
     @ReactMethod
     public void trackEvent(final String category, final String name) {
-        performTrackingAction(new TrackingAction() {
-            @Override
-            public void track() {
-                TpaTracker.trackEvent(category, name);
-            }
-        });
-
+        TPA.trackEvent(category, name);
     }
 
     @ReactMethod
     public void trackEventWithTags(final String category, final String name, final ReadableMap tags) {
-        performTrackingAction(new TrackingAction() {
-            @Override
-            public void track() {
-                TpaTracker.trackEvent(category, name, recursivelyDeconstructReadableMapString(tags));
-            }
-        });
-
+        TPA.trackEvent(category, name, recursivelyDeconstructReadableMapString(tags));
     }
     //endregion
 
@@ -149,32 +106,17 @@ public class TPAThePerfectAppModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void startTimingEvent(final String identifier, final Double startTimestamp, final String category, final String name) {
-        performTrackingAction(new TrackingAction() {
-            @Override
-            public void track() {
-                reactNativeTimingEvents.startTimingEvent(identifier, startTimestamp.longValue(), category, name);
-            }
-        });
+        reactNativeTimingEvents.startTimingEvent(identifier, startTimestamp.longValue(), category, name);
     }
 
     @ReactMethod
     public void trackTimingEvent(final String identifier, final Double endTimestamp) {
-        performTrackingAction(new TrackingAction() {
-            @Override
-            public void track() {
-                reactNativeTimingEvents.trackTimingEvent(identifier, endTimestamp.longValue(), null);
-            }
-        });
+        reactNativeTimingEvents.trackTimingEvent(identifier, endTimestamp.longValue(), null);
     }
 
     @ReactMethod
     public void trackTimingEventWithTags(final String identifier, final Double endTimestamp, final ReadableMap tags) {
-        performTrackingAction(new TrackingAction() {
-            @Override
-            public void track() {
-                reactNativeTimingEvents.trackTimingEvent(identifier, endTimestamp.longValue(), recursivelyDeconstructReadableMapString(tags));
-            }
-        });
+        reactNativeTimingEvents.trackTimingEvent(identifier, endTimestamp.longValue(), recursivelyDeconstructReadableMapString(tags));
     }
     //endregion
     //endregion
@@ -189,17 +131,31 @@ public class TPAThePerfectAppModule extends ReactContextBaseJavaModule {
     //region Feedback
     @ReactMethod
     public void invokeFeedback() {
-        if (TPAReactNativeConfiguration.getInstance().getFeedbackInvocation() == TPAReactNativeConfiguration.FeedbackInvocation.Disabled) {
-            return;
-        }
         TPA.startFeedback();
     }
     //endregion
 
     //region Log
     @ReactMethod
-    public void logDebug(String message) {
-        TpaLog.d(TAG, message);
+    public void log(String logLevel, String message) {
+        if (logLevel == null) {
+            return;
+        }
+
+        switch (logLevel) {
+            case "debug":
+                TPA.log.d(TAG, message);
+                break;
+            case "info":
+                TPA.log.i(TAG, message);
+                break;
+            case "warning":
+                TPA.log.w(TAG, message);
+                break;
+            case "error":
+                TPA.log.e(TAG, message);
+                break;
+        }
     }
     //endregion
 

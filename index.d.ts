@@ -1,16 +1,20 @@
 type CrashHandling = 'disabled'|'alwaysAsk'|'alwaysSend';
-type LogType = 'none'|'console'|'remote'|'both';
+type LoggingDestination = 'none'|'console'|'remote'|'both';
+type LogLevel = 'debug'|'info'|'warning'|'error';
 type FeedbackInvocation = 'disabled'|'enabled'|'shake';
+type UpdateNotification = 'disabled'|'manually'|'automatic';
 
 /**
  * Configuration interface. Used for configuring TPA in {@link TPA#initialize}.
  * Options are:
  *  - {@link crashHandling crashHandling}
- *  - {@link logType logType}
+ *  - {@link loggingDestination loggingDestination}
+ *  - {@link minimumLogLevelConsole minimumLogLevelConsole}
+ *  - {@link minimumLogLevelRemote minimumLogLevelRemote}
  *  - {@link feedbackInvocation feedbackInvocation}
  *  - {@link isAnalyticsEnabled isAnalyticsEnabled}
- *  - {@link isSessionRecordingEnabled isSessionRecordingEnabled}
  *  - {@link tpaDebugLog tpaDebugLog}
+ *  - {@link isNonFatalIssuesEnabled isNonFatalIssuesEnabled}
  */
 interface Configuration {
     /**
@@ -31,7 +35,19 @@ interface Configuration {
      *  'both'      - combines 'console' and 'remote' logging
      * @default 'none'
      */
-    logType?: LogType;
+    loggingDestination?: LoggingDestination;
+    /**
+     * The minimum log level that will be output to the console.
+     * Has no effect if {@link loggingDestination} is set to 'none'.
+     * @default 'debug'
+     */
+    minimumLogLevelConsole?: LogLevel;
+    /**
+     * The minimum log level that will be sent to TPA.
+     * Has no effect if {@link loggingDestination} is to 'none' or 'console'.
+     * @default 'debug'
+     */
+    minimumLogLevelRemote?: LogLevel;
     /**
      * Determines how feedback invocations are handled.
      * Possible values are:
@@ -42,22 +58,62 @@ interface Configuration {
      */
     feedbackInvocation?: FeedbackInvocation;
     /**
-     * Determines if tracking events are sent to TPA.
-     * @default true
-     */
-    isAnalyticsEnabled?: boolean;
-    /**
-     * Determines if start and end session events are send to TPA. These include basic device information.
-     * If disabled logging events are not reported to TPA even if {@link logType} is set to 'remote'.
-     * Important: This flag does nothing on Android.
+     *  Enable analytics for TPA. Enabling this will enable:
+     *  - Session recording. These are start and end events for your user.
+     *  - Tracking events. Events sent using {@link TPA#trackEvent trackEvent} and overloads.
+     *  - Timing events. Timing events sent using {@link TPA#trackTimingEvent trackTimingEvent} and overloads.
+     *  - App events. App events such as {@link TPA#trackScreenAppearing trackScreenAppearing} and {@link TPA#trackScreenDisappearing trackScreenDisappearing}.
      * @default false
      */
-    isSessionRecordingEnabled?: boolean;
+    isAnalyticsEnabled?: boolean;
     /**
      * When true the TPA library will output additional debug logging. This can be helpful for debugging issues with your TPA configuration.
      * @default false
      */
     tpaDebugLog?: boolean;
+    /**
+     * Determines if non-fatal issues are sent to TPA.
+     * @default false
+     */
+    isNonFatalIssuesEnabled?: boolean;
+    /**
+     * Determines how update notifications are handled.
+     * Possible values are:
+     *  'disabled'  - Update notification are disabled. Calls to checkForUpdate are ignored.
+     *  'enabled'   - Update notification are enabled. Call checkForUpdate to receive a notification if there is an update available.
+     *  'automatic' - Update notification are enabled. User will automatically be notified when an update is available.
+     * Note: On Android update notifications are dependent on the TPALib Distribution library, thus this will function differently.
+     * An app WITHOUT the TPALib Distribution library will always behave as if this flag is set to 'disabled'.
+     * An app WITH the TPALib Distribution library will behave as if this flag is 'enabled' and automatic update notification will appear if it is set to 'automatic'.
+     * @default 'disabled'
+     */
+    updateNotification?: UpdateNotification;
+}
+
+interface TPALog {
+    /**
+     * Write a debug log line to your chosen {@link Configuration#loggingDestination logging destinations}.
+     * @param message - the log line to write.
+     */
+    debug(message: string);
+
+    /**
+     * Write an info log line to your chosen {@link Configuration#loggingDestination logging destinations}.
+     * @param message - the log line to write.
+     */
+    info(message: string);
+
+    /**
+     * Write a warning log line to your chosen {@link Configuration#loggingDestination logging destinations}.
+     * @param message - the log line to write.
+     */
+    warning(message: string);
+
+    /**
+     * Write an error log line to your chosen {@link Configuration#loggingDestination logging destinations}.
+     * @param message - the log line to write.
+     */
+    error(message: string);
 }
 
 interface TPAInterface {
@@ -233,12 +289,7 @@ interface TPAInterface {
 
     // Logging
 
-    /**
-     * Write a debug log line to your chosen TPA logging destinations.
-     * @param {string} message - the message to log
-     * @see Configuration.logType
-     */
-    logDebug(message: string): void;
+    log: TPALog;
 }
 
 export const TPA: TPAInterface;

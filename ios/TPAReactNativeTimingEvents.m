@@ -45,7 +45,7 @@
 
 - (void)startTimingEvent:(NSString *)identifier startTimestamp:(NSUInteger)startTimestamp category:(NSString *)category name:(NSString *)name
 {
-    id timingEvent = [[TPAManager sharedManager] startTimingEventWithCategory:category name:name];
+    id timingEvent = [[TPA shared] startTimingEventWithCategory:category name:name];
     [_timingEvents setObject:[[TPATimingEventWrapper alloc] init:timingEvent startTimestamp:startTimestamp] forKey:identifier];
 }
 
@@ -53,7 +53,7 @@
 {
     TPATimingEventWrapper *timingEventWrapper = [_timingEvents valueForKey:identifier];
     if (timingEventWrapper != nil) {
-        [[TPAManager sharedManager] trackTimingEvent:timingEventWrapper.timingEvent
+        [[TPA shared] trackTimingEvent:timingEventWrapper.timingEvent
                                             duration:[self getDurationFromStartTimestamp:timingEventWrapper.startTimestamp toEndTimestamp:endTimestamp] tags:tags];
     }
     [_timingEvents removeObjectForKey:identifier];

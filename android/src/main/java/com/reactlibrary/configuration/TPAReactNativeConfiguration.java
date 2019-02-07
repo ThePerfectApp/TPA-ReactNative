@@ -2,50 +2,39 @@ package com.reactlibrary.configuration;
 
 import com.facebook.react.bridge.ReadableMap;
 
+import io.tpa.tpalib.CrashHandling;
+import io.tpa.tpalib.LogLevel;
+import io.tpa.tpalib.LoggingDestination;
 import io.tpa.tpalib.TpaConfiguration;
-import io.tpa.tpalib.ext.CrashHandling;
-import io.tpa.tpalib.ext.TpaLog;
+import io.tpa.tpalib.feedback.FeedbackInvocation;
 
 // This class is used to bridge the gap between iOS and Android configuration until a more permanent alignment is done between the two platforms.
 public class TPAReactNativeConfiguration {
-    //region Singleton
-    private static TPAReactNativeConfiguration instance;
-
-    private TPAReactNativeConfiguration() {}
-
-    public static TPAReactNativeConfiguration getInstance() {
-        if (instance == null) {
-            instance = new TPAReactNativeConfiguration();
-        }
-        return instance;
-    }
+    //region Constants
+    private final static String AutomaticUpdateCheckEnabled = "automatic";
     //endregion
 
     //region Required Configuration Values
     private String url;
     private String projectUuid;
     //endregion
-    //region Optional Configuration Values
-    private CrashHandling crashHandling = CrashHandling.DISABLED;
-    private TpaLog.Type logType = TpaLog.Type.NONE;
-    private FeedbackInvocation feedbackInvocation = FeedbackInvocation.Disabled;
-    private boolean isAnalyticsEnabled = true;
-    private boolean tpaDebugLog = false;
-    //endregion
 
-    public void configure(String url, String projectUuid, ReadableMap rawConfiguration) {
+    public TPAReactNativeConfiguration(String url, String projectUuid) {
         this.url = url;
         this.projectUuid = projectUuid;
-        parseConfiguration(rawConfiguration);
     }
 
     //region Enums
     private enum ConfigurationKeys {
         CrashHandling("crashHandling"),
-        LogType("logType"),
+        LoggingDestination("loggingDestination"),
+        MinimumLogLevelConsole("minimumLogLevelConsole"),
+        MinimumLogLevelRemote("minimumLogLevelRemote"),
         FeedbackInvocation("feedbackInvocation"),
         IsAnalyticsEnabled("isAnalyticsEnabled"),
-        TpaDebugLog("tpaDebugLog");
+        TpaDebugLog("tpaDebugLog"),
+        IsNonFatalIssuesEnabled("isNonFatalIssuesEnabled"),
+        UpdateNotification("updateNotification");
 
         private final String jsKey;
 
@@ -53,64 +42,58 @@ public class TPAReactNativeConfiguration {
             this.jsKey = jsKey;
         }
     }
-
-    public enum FeedbackInvocation {
-        Disabled("disabled"),
-        Enabled("enabled"),
-        Shake("shake");
-
-        private final String jsName;
-
-        FeedbackInvocation(final String jsName) {
-            this.jsName = jsName;
-        }
-
-        static FeedbackInvocation getByJSName(String jsName) {
-            if (jsName == null) {
-                return Disabled;
-            }
-
-            for (FeedbackInvocation feedbackInvocation: values()) {
-                if (feedbackInvocation.jsName.equals(jsName)) {
-                    return feedbackInvocation;
-                }
-            }
-
-            return Disabled;
-        }
-    }
     //endregion
 
     //region Parsing Methods
-    private void parseConfiguration(ReadableMap configuration) {
+    public TpaConfiguration parseConfiguration(ReadableMap configuration) {
+        TpaConfiguration.Builder builder = new TpaConfiguration.Builder(projectUuid, url);
+
         if (configuration == null) {
-            return;
+            return builder.build();
         }
 
         if (configuration.hasKey(ConfigurationKeys.CrashHandling.jsKey)) {
-            crashHandling = getCrashHandling(configuration.getString(ConfigurationKeys.CrashHandling.jsKey));
+            builder.setCrashHandling(getCrashHandling(configuration.getString(ConfigurationKeys.CrashHandling.jsKey)));
         }
 
-        if (configuration.hasKey(ConfigurationKeys.LogType.jsKey)) {
-            logType = getLogType(configuration.getString(ConfigurationKeys.LogType.jsKey));
+        if (configuration.hasKey(ConfigurationKeys.LoggingDestination.jsKey)) {
+            builder.setLoggingDestination(getLoggingDestination(configuration.getString(ConfigurationKeys.LoggingDestination.jsKey)));
+        }
+
+        if (configuration.hasKey(ConfigurationKeys.MinimumLogLevelConsole.jsKey)) {
+            builder.setMinimumLogLevelConsole(getLogLevel(configuration.getString(ConfigurationKeys.MinimumLogLevelConsole.jsKey)));
+        }
+
+        if (configuration.hasKey(ConfigurationKeys.MinimumLogLevelRemote.jsKey)) {
+            builder.setMinimumLogLevelRemote(getLogLevel(configuration.getString(ConfigurationKeys.MinimumLogLevelRemote.jsKey)));
         }
 
         if (configuration.hasKey(ConfigurationKeys.FeedbackInvocation.jsKey)) {
-            feedbackInvocation = FeedbackInvocation.getByJSName(configuration.getString(ConfigurationKeys.FeedbackInvocation.jsKey));
+            builder.setFeedbackInvocation(getFeedbackInvocation(configuration.getString(ConfigurationKeys.FeedbackInvocation.jsKey)));
         }
 
         if (configuration.hasKey(ConfigurationKeys.IsAnalyticsEnabled.jsKey)) {
-            isAnalyticsEnabled = configuration.getBoolean(ConfigurationKeys.IsAnalyticsEnabled.jsKey);
+            builder.enableAnalytics(configuration.getBoolean(ConfigurationKeys.IsAnalyticsEnabled.jsKey));
         }
 
         if (configuration.hasKey(ConfigurationKeys.TpaDebugLog.jsKey)) {
-            tpaDebugLog = configuration.getBoolean(ConfigurationKeys.TpaDebugLog.jsKey);
+            builder.enableDebug(configuration.getBoolean(ConfigurationKeys.TpaDebugLog.jsKey));
         }
+
+        if (configuration.hasKey(ConfigurationKeys.IsNonFatalIssuesEnabled.jsKey)) {
+            builder.setNonFatalIssuesEnabled(configuration.getBoolean(ConfigurationKeys.IsNonFatalIssuesEnabled.jsKey));
+        }
+
+        if (configuration.hasKey(ConfigurationKeys.UpdateNotification.jsKey)) {
+            builder.setAutomaticUpdateCheckEnabled(configuration.getString(ConfigurationKeys.UpdateNotification.jsKey).equals(AutomaticUpdateCheckEnabled));
+        }
+
+        return builder.build();
     }
 
     private CrashHandling getCrashHandling(String jsCrashHandling) {
         if (jsCrashHandling == null) {
-            return null;
+            return CrashHandling.DISABLED;
         }
 
         switch (jsCrashHandling) {
@@ -119,74 +102,65 @@ public class TPAReactNativeConfiguration {
             case "alwaysAsk":
                 return CrashHandling.ALWAYS_ASK;
             case "alwaysSend":
-                return CrashHandling.SILENT;
+                return CrashHandling.ALWAYS_SEND;
             default:
                 return CrashHandling.DISABLED;
         }
     }
 
-    private TpaLog.Type getLogType(String jsLogType) {
-        if (jsLogType == null) {
-            return null;
+    private LoggingDestination getLoggingDestination(String jsLoggingDestination) {
+        if (jsLoggingDestination == null) {
+            return LoggingDestination.CONSOLE;
         }
 
-        switch (jsLogType) {
+        switch (jsLoggingDestination) {
             case "none":
-                return TpaLog.Type.NONE;
+                return LoggingDestination.NONE;
             case "console":
-                return TpaLog.Type.LOGCAT;
+                return LoggingDestination.CONSOLE;
             case "remote":
-                return TpaLog.Type.REMOTE;
+                return LoggingDestination.REMOTE;
             case "both":
-                return TpaLog.Type.BOTH;
+                return LoggingDestination.BOTH;
             default:
-                return TpaLog.Type.NONE;
+                return LoggingDestination.CONSOLE;
         }
     }
-    //endregion
 
-    //region Getters
-    public TpaConfiguration getTpaConfiguration() {
-        if (this.url == null || this.projectUuid == null) {
-            return null; // Cannot generate TpaConfiguration without url and project UUID
+    private LogLevel getLogLevel(String jsLogLevel) {
+        if (jsLogLevel == null) {
+            return LogLevel.DEBUG;
         }
 
-        TpaConfiguration.Builder configBuilder = new TpaConfiguration.Builder(this.projectUuid, this.url);
-
-        configBuilder.setCrashHandling(crashHandling);
-        configBuilder.setLogType(logType);
-        configBuilder.useShakeFeedback(feedbackInvocation == FeedbackInvocation.Shake);
-        configBuilder.enableDebug(tpaDebugLog);
-
-        return configBuilder.build();
+        switch (jsLogLevel) {
+            case "debug":
+                return LogLevel.DEBUG;
+            case "info":
+                return LogLevel.INFO;
+            case "warning":
+                return LogLevel.WARNING;
+            case "error":
+                return LogLevel.ERROR;
+            default:
+                return LogLevel.DEBUG;
+        }
     }
 
-    public String getUrl() {
-        return url;
-    }
+    private FeedbackInvocation getFeedbackInvocation(String jsFeedbackInvocation) {
+        if (jsFeedbackInvocation == null) {
+            return FeedbackInvocation.DISABLED;
+        }
 
-    public String getProjectUuid() {
-        return projectUuid;
-    }
-
-    public CrashHandling getCrashHandling() {
-        return crashHandling;
-    }
-
-    public TpaLog.Type getLogType() {
-        return logType;
-    }
-
-    public FeedbackInvocation getFeedbackInvocation() {
-        return feedbackInvocation;
-    }
-
-    public boolean isAnalyticsEnabled() {
-        return isAnalyticsEnabled;
-    }
-
-    public boolean isTpaDebugLog() {
-        return tpaDebugLog;
+        switch (jsFeedbackInvocation) {
+            case "disabled":
+                return FeedbackInvocation.DISABLED;
+            case "enabled":
+                return FeedbackInvocation.ENABLED;
+            case "shake":
+                return FeedbackInvocation.EVENT_SHAKE;
+            default:
+                return FeedbackInvocation.DISABLED;
+        }
     }
     //endregion
 }

@@ -19,10 +19,10 @@ int const NON_FATAL_STACKTRACE_INDEX = 4;
 +(void)reportNonFatalIssueWithReason:(NSString *)reason stacktrace:(NSString *)stacktrace userInfo:(NSDictionary *)userInfo
 {
     SEL reportNonFatalIssue = NSSelectorFromString(@"reportNonFatalIssueWithReason:error:reactNativeStacktrace:");
-    if ([[TPAManager sharedManager] respondsToSelector:reportNonFatalIssue]) {
-        NSInvocation *reportNonFatalInvocation = [NSInvocation invocationWithMethodSignature:[[TPAManager sharedManager] methodSignatureForSelector:reportNonFatalIssue]];
+    if ([[TPA shared] respondsToSelector:reportNonFatalIssue]) {
+        NSInvocation *reportNonFatalInvocation = [NSInvocation invocationWithMethodSignature:[[TPA shared] methodSignatureForSelector:reportNonFatalIssue]];
         [reportNonFatalInvocation setSelector:reportNonFatalIssue];
-        [reportNonFatalInvocation setTarget:[TPAManager sharedManager]];
+        [reportNonFatalInvocation setTarget:[TPA shared]];
         
         NSError * nonFatalError = [NSError errorWithDomain:@"React-Native Non-Fatal Issue" code:0 userInfo:userInfo];
         
