@@ -130,7 +130,7 @@ public class TPAThePerfectAppModule extends ReactContextBaseJavaModule {
 
     //region Feedback
     @ReactMethod
-    public void invokeFeedback() {
+    public void startFeedback() {
         TPA.startFeedback();
     }
     //endregion
