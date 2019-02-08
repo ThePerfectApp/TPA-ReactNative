@@ -144,16 +144,16 @@ public class TPAThePerfectAppModule extends ReactContextBaseJavaModule {
 
         switch (logLevel) {
             case "debug":
-                TPA.log.d(TAG, message);
+                TPA.log.d("", message);
                 break;
             case "info":
-                TPA.log.i(TAG, message);
+                TPA.log.i("", message);
                 break;
             case "warning":
-                TPA.log.w(TAG, message);
+                TPA.log.w("", message);
                 break;
             case "error":
-                TPA.log.e(TAG, message);
+                TPA.log.e("", message);
                 break;
         }
     }
