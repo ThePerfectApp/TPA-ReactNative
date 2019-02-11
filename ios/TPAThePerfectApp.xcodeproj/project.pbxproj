@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		0E469EB51EBB217900E62208 /* ThePerfectApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E469EB41EBB217100E62208 /* ThePerfectApp.framework */; };
+		B0AC900C2211576900582A2D /* TPAStartupNotifier.m in Sources */ = {isa = PBXBuildFile; fileRef = B0AC900B2211576900582A2D /* TPAStartupNotifier.m */; };
 		B0DF6FEF21F84D870089AFF7 /* TPANonFatalReporting.m in Sources */ = {isa = PBXBuildFile; fileRef = B0DF6FEE21F84D870089AFF7 /* TPANonFatalReporting.m */; };
 		B0DF707921FAFEA30089AFF7 /* TPAReactNativeTimingEvents.m in Sources */ = {isa = PBXBuildFile; fileRef = B0DF707821FAFEA30089AFF7 /* TPAReactNativeTimingEvents.m */; };
 		B3E7B58A1CC2AC0600A0062D /* TPAThePerfectApp.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* TPAThePerfectApp.m */; };
@@ -28,6 +29,8 @@
 /* Begin PBXFileReference section */
 		0E469EB41EBB217100E62208 /* ThePerfectApp.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ThePerfectApp.framework; sourceTree = "<group>"; };
 		134814201AA4EA6300B7C361 /* libTPAThePerfectApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libTPAThePerfectApp.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		B0AC900A2211576900582A2D /* TPAStartupNotifier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TPAStartupNotifier.h; sourceTree = "<group>"; };
+		B0AC900B2211576900582A2D /* TPAStartupNotifier.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TPAStartupNotifier.m; sourceTree = "<group>"; };
 		B0DF6FEE21F84D870089AFF7 /* TPANonFatalReporting.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TPANonFatalReporting.m; sourceTree = "<group>"; };
 		B0DF6FF021F84D940089AFF7 /* TPANonFatalReporting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TPANonFatalReporting.h; sourceTree = "<group>"; };
 		B0DF706821FAEA850089AFF7 /* RCTBridgeModule.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RCTBridgeModule.h; sourceTree = "<group>"; };
@@ -70,6 +73,8 @@
 			isa = PBXGroup;
 			children = (
 				B0DF706721FAEA160089AFF7 /* DevHeaders */,
+				B0AC900A2211576900582A2D /* TPAStartupNotifier.h */,
+				B0AC900B2211576900582A2D /* TPAStartupNotifier.m */,
 				B0DF6FF021F84D940089AFF7 /* TPANonFatalReporting.h */,
 				B0DF6FEE21F84D870089AFF7 /* TPANonFatalReporting.m */,
 				B0DF707721FAFE8C0089AFF7 /* TPAReactNativeTimingEvents.h */,
@@ -149,6 +154,7 @@
 				B3E7B58A1CC2AC0600A0062D /* TPAThePerfectApp.m in Sources */,
 				B0DF707921FAFEA30089AFF7 /* TPAReactNativeTimingEvents.m in Sources */,
 				B0DF6FEF21F84D870089AFF7 /* TPANonFatalReporting.m in Sources */,
+				B0AC900C2211576900582A2D /* TPAStartupNotifier.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -3,6 +3,7 @@
 #import <ThePerfectApp/ThePerfectApp.h>
 #import "TPANonFatalReporting.h"
 #import "TPAReactNativeTimingEvents.h"
+#import "TPAStartupNotifier.h"
 
 @implementation TPAThePerfectApp
 {
@@ -78,6 +79,8 @@ RCT_EXPORT_METHOD(initialize:(NSString *)url projectUuid:(NSString *)projectUuid
     }
     
     [[TPA shared] startWithBaseUrl:url projectUuid:projectUuid];
+    
+    [TPAStartupNotifier ensureStartup]; // Make sure applicationDidBecomeActive is called
 }
 
 - (TPACrashReporting)getCrashHandling:(id)crashHandlingJS
