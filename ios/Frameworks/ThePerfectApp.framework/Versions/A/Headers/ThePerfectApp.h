@@ -17,18 +17,23 @@
 #import "TPA+UpdateNotification.h"
 
 
-//! Project version number for ThePerfectApp.
+/**
+ * :nodoc:
+ *
+ * Project version number for ThePerfectApp.
+ */
 FOUNDATION_EXPORT double ThePerfectAppVersionNumber;
 
-//! Project version string for ThePerfectApp.
+/**
+ * :nodoc:
+ *
+ * Project version string for ThePerfectApp.
+ */
 FOUNDATION_EXPORT const unsigned char ThePerfectAppVersionString[];
 
 /**
  * The TPA singleton is responsible for handling update notifications and crash reporting to a TPA server.
  */
 @interface TPA : NSObject<TPAConfigure, TPAAnalytics, TPACrashReporting, TPADebugging, TPAFeedback, TPALogging, TPANonFatal, TPAUpdateNotification>
-
-/** Get the one and only TPA instance. */
-+(TPA * _Nonnull)shared;
 
 @end

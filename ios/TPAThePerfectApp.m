@@ -247,4 +247,11 @@ RCT_EXPORT_METHOD(log:(NSString *)logLevel message:(NSString *)message)
     }
 }
 
+#pragma mark - Updates
+
+RCT_EXPORT_METHOD(checkForUpdate)
+{
+    [[TPA shared] checkForUpdate];
+}
+
 @end

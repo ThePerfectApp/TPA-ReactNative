@@ -7,23 +7,56 @@
 //
 
 
+/// :nodoc:
 @interface TPATimingEvent : NSObject
 @end
 
 
+/**
+ * Analytics-related features.
+ */
 @protocol TPAAnalytics
 
+#pragma mark - Feature Flags
+
 /**
- * If enabled, analytics data will be sent to the server
- * Analytics data includes
- *  - session start/end events containing basic information about the device.
- *  - app events
- *  - timing events
- *  - tracking events
+ * If enabled, analytics data will be sent to the server.
  *
- * Enabled by default
+ * Analytics data include
+ * - session start/end events containing basic information about the device.
+ * - app events
+ * - timing events
+ * - tracking events
+ *
+ * <p></p>
+ *
+ * @note Disabled by default.
  */
 @property (nonatomic, assign, getter=isAnalyticsEnabled) BOOL analyticsEnabled;
+
+
+#pragma mark - App Events
+
+/**
+ * Tracks an app event with a category. All app events with the same
+ * category will be grouped on TPA.
+ *
+ * @param category  The category of the event
+ * @param name     The event name to track
+ */
+- (void)trackEventWithCategory:(NSString * _Nonnull)category name:(NSString * _Nonnull)name
+NS_SWIFT_NAME(trackEvent(category:name:));
+
+/**
+ * Tracks an app event with a category and tags. All app events with the same
+ * category will be grouped on TPA. Tags can be used to filter events on TPA.
+ *
+ * @param name      The event name to track
+ * @param category  The category of the event
+ * @param tags      Tags that can be used to filter events on TPA.
+ */
+- (void)trackEventWithCategory:(NSString * _Nonnull)category name:(NSString * _Nonnull)name tags:(NSDictionary * _Nullable)tags
+NS_SWIFT_NAME(trackEvent(category:name:tags:));
 
 
 #pragma mark - Timed Events
@@ -92,28 +125,7 @@ NS_SWIFT_NAME(trackTimingEvent(_:duration:));
 NS_SWIFT_NAME(trackTimingEvent(_:duration:tags:));
 
 
-#pragma mark - App Events
-
-/**
- * Tracks an app event with a category. All app events with the same
- * category will be grouped on TPA.
- *
- * @param category  The category of the event
- * @param name     The event name to track
- */
-- (void)trackEventWithCategory:(NSString * _Nonnull)category name:(NSString * _Nonnull)name
-NS_SWIFT_NAME(trackEvent(category:name:));
-
-/**
- * Tracks an app event with a category and tags. All app events with the same
- * category will be grouped on TPA. Tags can be used to filter events on TPA.
- *
- * @param name      The event name to track
- * @param category  The category of the event
- * @param tags      Tags that can be used to filter events on TPA.
- */
-- (void)trackEventWithCategory:(NSString * _Nonnull)category name:(NSString * _Nonnull)name tags:(NSDictionary * _Nullable)tags
-NS_SWIFT_NAME(trackEvent(category:name:tags:));
+#pragma mark - Screen Tracking
 
 /**
  * Tracks a screen appearing event. It is recommended to track screen

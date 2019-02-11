@@ -6,7 +6,20 @@
 //  Copyright © 2019 The Perfect App Ltd. All rights reserved.
 //
 
+@class TPA;
+
+
+/**
+ * Configuring and starting TPA.
+ */
 @protocol TPAConfigure
+
+/**
+ * Get the one and only TPA instance.
+ *
+ * @return The one and only TPA.
+ */
++(TPA * _Nonnull)shared;
 
 /**
  * Starts TPA. No properties of the manager can be modified after calling this method.

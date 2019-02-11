@@ -6,6 +6,10 @@
 //  Copyright © 2019 The Perfect App Ltd. All rights reserved.
 //
 
+
+/**
+ * How to handle update notifications.
+ */
 typedef NS_ENUM(NSUInteger, TPAUpdateNotification)
 {
     /** Update Notifications are disabled. */
@@ -17,6 +21,9 @@ typedef NS_ENUM(NSUInteger, TPAUpdateNotification)
 };
 
 
+/**
+ * Notify users about new app release.
+ */
 @protocol TPAUpdateNotification
 
 /**
@@ -25,7 +32,7 @@ typedef NS_ENUM(NSUInteger, TPAUpdateNotification)
  * Cannot be enabled for apps distributed via the App Store.
  * Cannot be enabled for extensions.
  *
- * Disabled by default.
+ * @note `TPAUpdateNotificationDisabled` by default.
  */
 @property (nonatomic, readwrite) TPAUpdateNotification updateNotification;
 

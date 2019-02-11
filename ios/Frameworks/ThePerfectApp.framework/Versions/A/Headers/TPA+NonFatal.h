@@ -6,12 +6,16 @@
 //  Copyright © 2019 The Perfect App Ltd. All rights reserved.
 //
 
+
+/**
+ * Reporting non-fatal errors.
+ */
 @protocol TPANonFatal
 
 /**
  * Enable non-fatal error reporting by uploading reports to the TPA server.
  *
- * TPACrashReportingDisabled by default.
+ * @note `TPACrashReportingDisabled` by default.
  */
 @property (nonatomic, assign, getter=isNonFatalEnabled) BOOL nonFatalEnabled;
 

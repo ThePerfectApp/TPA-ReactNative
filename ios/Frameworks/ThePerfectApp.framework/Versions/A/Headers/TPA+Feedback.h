@@ -6,6 +6,10 @@
 //  Copyright © 2019 The Perfect App Ltd. All rights reserved.
 //
 
+
+/**
+ * Which feedback options to enable.
+ */
 typedef NS_ENUM(NSUInteger, TPAFeedbackInvocation)
 {
     TPAFeedbackInvocationDisabled = 0,
@@ -13,11 +17,15 @@ typedef NS_ENUM(NSUInteger, TPAFeedbackInvocation)
     TPAFeedbackInvocationEventShake = TPAFeedbackInvocationEnabled | 1 << 1,
 };
 
+
+/**
+ * User feedback.
+ */
 @protocol TPAFeedback
 
 /**
  *
- * Disabled by default.
+ * @note `TPAFeedbackInvocationDisabled` by default.
  */
 @property (nonatomic, assign) TPAFeedbackInvocation feedbackInvocation;
 

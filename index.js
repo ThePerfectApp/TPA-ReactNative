@@ -313,6 +313,16 @@ module.exports.TPA = {
 		error: function (message) {
 			TPAThePerfectApp.log('error', message);
 		}
+	},
+
+	// Update
+
+	/**
+	 * Manually check if an update is available. If an update is available, the user have the option to install it from a dialog.
+	 * Does nothing if {@link Configuration#updateNotification} is 'disabled'.
+	 */
+	checkForUpdate: function() {
+		TPAThePerfectApp.checkForUpdate();
 	}
 
 };

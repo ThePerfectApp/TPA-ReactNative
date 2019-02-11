@@ -2,6 +2,8 @@
 package com.reactlibrary;
 
 
+import android.app.Activity;
+
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -155,6 +157,16 @@ public class TPAThePerfectAppModule extends ReactContextBaseJavaModule {
             case "error":
                 TPA.log.e("", message);
                 break;
+        }
+    }
+    //endregion
+
+    //region Updates
+    @ReactMethod
+    public void checkForUpdate() {
+        Activity currentActivity = getCurrentActivity();
+        if (currentActivity != null) {
+            TPA.checkForUpdates(currentActivity);
         }
     }
     //endregion

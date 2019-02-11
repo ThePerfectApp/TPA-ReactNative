@@ -6,6 +6,10 @@
 //  Copyright © 2019 The Perfect App Ltd. All rights reserved.
 //
 
+
+/**
+ * How to handle crash reporting within the app.
+ */
 typedef NS_ENUM(NSUInteger, TPACrashReporting)
 {
     /** Crash reporting is disabled. */
@@ -16,6 +20,10 @@ typedef NS_ENUM(NSUInteger, TPACrashReporting)
     TPACrashReportingAlwaysSend,
 };
 
+
+/**
+ * Reporting crashes.
+ */
 @protocol TPACrashReporting
 
 /**
@@ -23,27 +31,15 @@ typedef NS_ENUM(NSUInteger, TPACrashReporting)
  *
  * Only TPACrashReportingDisabled and TPACrashReportingAlwaysSend are valid for extensions.
  *
- * TPACrashReportingDisabled by default.
+ * @note `TPACrashReportingDisabled` by default.
  */
 @property (nonatomic, assign) TPACrashReporting crashReporting;
 
 /**
  * Trap fatal signals via a Mach exception server.
  *
- * Disabled by default.
+ * @note Disabled by default.
  */
 @property (nonatomic, assign, getter=isMachExceptionHandlerEnabled) BOOL enableMachExceptionHandler;
-
-/**
- * Report a non-fatal issue.
- *
- * Stacktrace will be generated automatically.
- *
- * This feature requires that analytics is enabled (and therefore does not work in iOS extensions).
- */
-- (void)reportNonFatalIssueWithReason:(NSString * _Nullable)reason error:(NSError *_Nullable)error;
-- (void)reportNonFatalIssueWithReason:(NSString * _Nullable)reason;
-- (void)reportNonFatalIssueWithError:(NSError *_Nullable)error NS_SWIFT_NAME(reportNonFatalIssue(withError:));
-- (void)reportNonFatalIssue;
 
 @end
