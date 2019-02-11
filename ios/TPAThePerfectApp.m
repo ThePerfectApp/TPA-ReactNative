@@ -4,6 +4,11 @@
 #import "TPANonFatalReporting.h"
 #import "TPAReactNativeTimingEvents.h"
 #import "TPAStartupNotifier.h"
+#if __has_include(<React/RCTConvert.h>)
+#import <React/RCTConvert.h>
+#else
+#import "RCTConvert.h"
+#endif
 
 @implementation TPAThePerfectApp
 {
@@ -60,17 +65,17 @@ RCT_EXPORT_METHOD(initialize:(NSString *)url projectUuid:(NSString *)projectUuid
     
     id analyticsEnabledJS = [configuration objectForKey:kAnalyticsEnabledJSKey];
     if (analyticsEnabledJS != nil) {
-        [TPA shared].analyticsEnabled = (BOOL)analyticsEnabledJS;
+        [TPA shared].analyticsEnabled = [RCTConvert BOOL:analyticsEnabledJS];
     }
     
     id debugLoggingEnabled = [configuration objectForKey:kTpaDebugLoggingJSKey];
     if (debugLoggingEnabled != nil) {
-        [TPA shared].tpaDebugLoggingEnabled = (BOOL)debugLoggingEnabled;
+        [TPA shared].tpaDebugLoggingEnabled = [RCTConvert BOOL:debugLoggingEnabled];
     }
     
     id isNonFatalIssuesEnabledJS = [configuration objectForKey:kIsNonFatalIssuesEnabledJSKey];
     if (isNonFatalIssuesEnabledJS != nil) {
-        [TPA shared].nonFatalEnabled = (BOOL)isNonFatalIssuesEnabledJS;
+        [TPA shared].nonFatalEnabled = [RCTConvert BOOL:isNonFatalIssuesEnabledJS];
     }
     
     id updateNotificationJS = [configuration objectForKey:kUpdateNotificationJSKey];
