@@ -30,7 +30,9 @@
     "index.d.ts",
     "/windows",
     "/ios",
-    "/android",
+    "/android/libs",
+    "/android/src",
+    "/android/build.gradle",
     "postinstall.sh"
   ]
 }
