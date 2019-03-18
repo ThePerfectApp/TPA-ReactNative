@@ -26,9 +26,12 @@
  *
  * This feature requires that analytics is enabled (and therefore does not work in iOS extensions).
  */
-- (void)reportNonFatalIssueWithReason:(NSString * _Nullable)reason error:(NSError *_Nullable)error;
-- (void)reportNonFatalIssueWithReason:(NSString * _Nullable)reason;
-- (void)reportNonFatalIssueWithError:(NSError *_Nullable)error NS_SWIFT_NAME(reportNonFatalIssue(withError:));
-- (void)reportNonFatalIssue;
-
+- (void)reportNonFatalIssueWithReason:(NSString * _Nullable)reason error:(NSError *_Nullable)error
+    NS_SWIFT_NAME(reportNonFatalIssue(withReason:error:));
+- (void)reportNonFatalIssueWithReason:(NSString * _Nullable)reason
+    NS_SWIFT_NAME(reportNonFatalIssue(withReason:));
+- (void)reportNonFatalIssueWithError:(NSError *_Nullable)error
+    NS_SWIFT_NAME(reportNonFatalIssue(withError:));
+- (void)reportNonFatalIssue
+    NS_SWIFT_NAME(reportNonFatalIssue());
 @end
