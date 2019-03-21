@@ -21,7 +21,7 @@ Configure TPA with Project UUID and upload URL in the native AppDelegate and ena
 ### Android
 
 1. Add the following line to `android/build.gradle` under `repositories`, which is under `allprojects`:
-    `maven { url "http://nexus.trifork.com/content/repositories/releases" }`
+    `flatDir { dirs "$rootDir/../node_modules/react-native-the-perfect-app/android/libs" }`
 
 Configure TPA with Project UUID and upload URL in the native MainApplication class and enable/disable features as needed. Refer to the documentation on your tpa.io domain for more information about configuring TPA.
 
@@ -33,20 +33,19 @@ Refer to the documentation on your tpa.io domain for more information. When trac
 import { TPA } from 'react-native-the-perfect-app';
 
 // Track events
-TPA.trackEvent('Action', 'ShowProfile')
-TPA.trackEventWithTags('Action', 'ShowProfile', { 'Gender':'F'})
+TPA.trackEvent('Action', 'ShowProfile');
+TPA.trackEventWithTags('Action', 'ShowProfile', { 'Gender':'F'});
 
 // Track screens
-TPA.trackScreenAppearing('Screen Title')
-TPA.trackScreenDisappearing('Screen Title')
+TPA.trackScreenAppearing('Screen Title');
+TPA.trackScreenDisappearing('Screen Title');
 
 // Track timing
-timing = TPA.startTimingEvent('Timing', 'Level 1')
-...
-TPA.trackTimingEvent(timing)
+const timing = TPA.startTimingEvent('Timing', 'Level 1');
+TPA.trackTimingEvent(timing);
 
 
-// Debug logs
-TPA.logDebug('Error during activation')
+// Logs
+TPA.log.debug('Error during activation');
 
 ```
