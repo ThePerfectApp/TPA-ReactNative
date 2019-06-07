@@ -1,6 +1,6 @@
 {
   "name": "react-native-the-perfect-app",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "TPA is the world leading tool for app distribution to mobile devices. Watch live statistics and collect both detailed crash reports and feedback with JIRA integration. TPA helps your team to quickly respond to actual app usage.",
   "main": "index.js",
   "scripts": {
