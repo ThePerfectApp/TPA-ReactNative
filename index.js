@@ -9,6 +9,22 @@ import {
 
 let TPAThePerfectApp = NativeModules.TPAThePerfectApp;
 
+/**
+ * Generate timing event identifier. The identifier consists of the category, name and timestamp appended with 10 pseudo random digits.
+ * Preferably this would have been an UUID but they are not supported out of the box in javascript.
+ * @param category {string}
+ * @param name {string}
+ * @param startTimestamp {number}
+ * @returns {string}
+ */
+function generateTimingEventIdentifier(category, name, startTimestamp) {
+	let identifier = `${category}-${name}-${startTimestamp}-`;
+	for (let i = 0; i < 10; i++) {
+		identifier += Math.random() * 10;
+	}
+	return identifier;
+}
+
 module.exports.TPA = {
 
 	// Configuration
@@ -197,8 +213,9 @@ module.exports.TPA = {
 	 * @returns {string} the identifier of the event, this is later used to complete the tracking with {@link trackTimingEvent} or {@link trackTimingEventWithTags}.
 	 */
 	startTimingEvent: function (category, name) {
-		let identifier = TPAThePerfectApp.getNewTimingEventIdentifier();
-		TPAThePerfectApp.startTimingEvent(identifier, Date.now(), category, name);
+		let startTimestamp = Date.now();
+		let identifier = generateTimingEventIdentifier(category, name, startTimestamp);
+		TPAThePerfectApp.startTimingEvent(identifier, startTimestamp, category, name);
 		return identifier;
 	},
 

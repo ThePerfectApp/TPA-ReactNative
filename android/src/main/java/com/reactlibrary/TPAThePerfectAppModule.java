@@ -101,11 +101,6 @@ public class TPAThePerfectAppModule extends ReactContextBaseJavaModule {
     //endregion
 
     //region Timing Event
-    @ReactMethod(isBlockingSynchronousMethod=true)
-    public String getNewTimingEventIdentifier() {
-        return UUID.randomUUID().toString();
-    }
-
     @ReactMethod
     public void startTimingEvent(final String identifier, final Double startTimestamp, final String category, final String name) {
         reactNativeTimingEvents.startTimingEvent(identifier, startTimestamp.longValue(), category, name);

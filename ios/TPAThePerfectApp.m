@@ -198,11 +198,6 @@ RCT_EXPORT_METHOD(trackEventWithTags:(NSString *)category name:(NSString *)name 
 
 #pragma mark - Duration tracking
 
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getNewTimingEventIdentifier)
-{
-    return [NSUUID UUID].UUIDString;
-}
-
 RCT_EXPORT_METHOD(startTimingEvent:(NSString *)identifier startTimestamp:(NSUInteger)startTimestamp category:(NSString *)category name:(NSString *)name)
 {
     [_timingEventHandler startTimingEvent:identifier startTimestamp:startTimestamp category:category name:name];
