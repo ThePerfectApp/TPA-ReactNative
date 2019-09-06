@@ -6,6 +6,7 @@
 #import "TPAStartupNotifier.h"
 //#if __has_include(<React/RCTConvert.h>)
 #import <React/RCTConvert.h>
+#import <React/RCTAssert.h>
 //#else
 //#import "RCTConvert.h"
 //#endif
@@ -218,6 +219,15 @@ RCT_EXPORT_METHOD(trackTimingEventWithTags:(NSString *)identifier endTimestamp:(
 RCT_EXPORT_METHOD(reportNonFatalIssue:(NSString *)stackTrace reason:(NSString *)reason userInfo:(NSDictionary *)userInfo)
 {
     [TPANonFatalReporting reportNonFatalIssueWithReason:reason stacktrace:stackTrace userInfo:userInfo];
+}
+
+#pragma mark - Fatal Error
+
+RCT_EXPORT_METHOD(exitWithFatalError:(NSString *)name stackTrace:(NSArray<NSDictionary *> *)stackTrace)
+{
+    NSString *exceptionName = [NSString stringWithFormat:@"Unhandled JS Exception: %@", name];
+    NSError *error = [NSError errorWithDomain:RCTErrorDomain code:0 userInfo:@{RCTJSStackTraceKey: stackTrace, NSLocalizedDescriptionKey: exceptionName}];
+    RCTFatal(error);
 }
 
 #pragma mark - Feedback

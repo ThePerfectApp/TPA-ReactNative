@@ -25,6 +25,8 @@ function generateTimingEventIdentifier(category, name, startTimestamp) {
 	return identifier;
 }
 
+let logDebug = false;
+
 module.exports.TPA = {
 
 	// Configuration
@@ -108,6 +110,10 @@ module.exports.TPA = {
 	 * @param {Configuration} configuration - The configurations for your app, if set to nil all defaults will be used.
 	 */
 	initialize: function(url, projectUuid, configuration) {
+		if (configuration !== null && configuration !== undefined && configuration.tpaDebugLog !== undefined) {
+			logDebug = configuration.tpaDebugLog;
+		}
+
 		TPAThePerfectApp.initialize(url, projectUuid, configuration);
 	},
 
@@ -284,6 +290,22 @@ module.exports.TPA = {
 			reason = `${error.name}: ${error.message}`;
 		}
 		TPAThePerfectApp.reportNonFatalIssue(error.stack, reason, userInfoMap);
+	},
+
+	// Fatal Issues
+
+	/**
+	 * Throws a javascript error as a fatal exception, this can be useful for forcing the app to crash even in the case of soft javascript exceptions or error in the component tree.
+	 * WARNING: This will crash your app, only call this if you are absolutely certain that is the behavior you want.
+	 * @param error - the javascript error to throw
+	 */
+	exitWithFatalError(error) {
+		if (error === undefined && logDebug) {
+			console.warn('TPA.reportFatalError called with undefined error, app will not crash as this is unexpected behaviour.');
+			return;
+		}
+		const parseErrorStack = require('react-native/Libraries/Core/Devtools/parseErrorStack');
+		TPAThePerfectApp.exitWithFatalError(`${error.name}: ${error.message}`, parseErrorStack(error));
 	},
 
 	// Feedback

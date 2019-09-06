@@ -279,6 +279,15 @@ interface TPAInterface {
      */
     reportNonFatalIssueWithError(error: Error, reason?: string, userInfoMap?: { [key: string]: any }): void;
 
+    // Fatal Issue
+
+    /**
+     * Throws a javascript error as a fatal exception, this can be useful for forcing the app to crash even in the case of soft javascript exceptions or error in the component tree.
+     * WARNING: This will crash your app, only call this if you are absolutely certain that is the behavior you want.
+     * @param error {Error} - the javascript error throw
+     */
+    exitWithFatalError(error: Error): void;
+
     // Feedback
 
     /**
