@@ -11,6 +11,9 @@ import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.ReadableType;
+import com.facebook.react.common.JavascriptException;
+import com.facebook.react.devsupport.JSException;
+import com.facebook.react.util.JSStackTrace;
 import com.reactlibrary.configuration.TPAReactNativeConfiguration;
 import com.reactlibrary.timingevents.ReactNativeTimingEvents;
 
@@ -101,11 +104,6 @@ public class TPAThePerfectAppModule extends ReactContextBaseJavaModule {
     //endregion
 
     //region Timing Event
-    @ReactMethod(isBlockingSynchronousMethod=true)
-    public String getNewTimingEventIdentifier() {
-        return UUID.randomUUID().toString();
-    }
-
     @ReactMethod
     public void startTimingEvent(final String identifier, final Double startTimestamp, final String category, final String name) {
         reactNativeTimingEvents.startTimingEvent(identifier, startTimestamp.longValue(), category, name);
@@ -129,6 +127,15 @@ public class TPAThePerfectAppModule extends ReactContextBaseJavaModule {
         TPACrossPlatformIssueReporting.reportNonFatalIssue(stackTrace, reason, recursivelyDeconstructReadableMap(userInfo), TPASupportedPlatforms.ReactNative);
     }
     //endregion
+
+    //region FatalError
+    @ReactMethod
+    public void exitWithFatalError(String message, ReadableArray stackTrace) {
+        if (stackTrace == null) {
+            return;
+        }
+        throw new JavascriptException(JSStackTrace.format(message, stackTrace));
+    }
 
     //region Feedback
     @ReactMethod

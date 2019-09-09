@@ -9,6 +9,24 @@ import {
 
 let TPAThePerfectApp = NativeModules.TPAThePerfectApp;
 
+/**
+ * Generate timing event identifier. The identifier consists of the category, name and timestamp appended with 10 pseudo random digits.
+ * Preferably this would have been an UUID but they are not supported out of the box in javascript.
+ * @param category {string}
+ * @param name {string}
+ * @param startTimestamp {number}
+ * @returns {string}
+ */
+function generateTimingEventIdentifier(category, name, startTimestamp) {
+	let identifier = `${category}-${name}-${startTimestamp}-`;
+	for (let i = 0; i < 10; i++) {
+		identifier += Math.random() * 10;
+	}
+	return identifier;
+}
+
+let logDebug = false;
+
 module.exports.TPA = {
 
 	// Configuration
@@ -92,6 +110,10 @@ module.exports.TPA = {
 	 * @param {Configuration} configuration - The configurations for your app, if set to nil all defaults will be used.
 	 */
 	initialize: function(url, projectUuid, configuration) {
+		if (configuration !== null && configuration !== undefined && configuration.tpaDebugLog !== undefined) {
+			logDebug = configuration.tpaDebugLog;
+		}
+
 		TPAThePerfectApp.initialize(url, projectUuid, configuration);
 	},
 
@@ -197,8 +219,9 @@ module.exports.TPA = {
 	 * @returns {string} the identifier of the event, this is later used to complete the tracking with {@link trackTimingEvent} or {@link trackTimingEventWithTags}.
 	 */
 	startTimingEvent: function (category, name) {
-		let identifier = TPAThePerfectApp.getNewTimingEventIdentifier();
-		TPAThePerfectApp.startTimingEvent(identifier, Date.now(), category, name);
+		let startTimestamp = Date.now();
+		let identifier = generateTimingEventIdentifier(category, name, startTimestamp);
+		TPAThePerfectApp.startTimingEvent(identifier, startTimestamp, category, name);
 		return identifier;
 	},
 
@@ -267,6 +290,22 @@ module.exports.TPA = {
 			reason = `${error.name}: ${error.message}`;
 		}
 		TPAThePerfectApp.reportNonFatalIssue(error.stack, reason, userInfoMap);
+	},
+
+	// Fatal Issues
+
+	/**
+	 * Throws a javascript error as a fatal exception, this can be useful for forcing the app to crash even in the case of soft javascript exceptions or error in the component tree.
+	 * WARNING: This will crash your app, only call this if you are absolutely certain that is the behavior you want.
+	 * @param error - the javascript error to throw
+	 */
+	exitWithFatalError(error) {
+		if (error === undefined && logDebug) {
+			console.warn('TPA.reportFatalError called with undefined error, app will not crash as this is unexpected behaviour.');
+			return;
+		}
+		const parseErrorStack = require('react-native/Libraries/Core/Devtools/parseErrorStack');
+		TPAThePerfectApp.exitWithFatalError(`${error.name}: ${error.message}`, parseErrorStack(error));
 	},
 
 	// Feedback

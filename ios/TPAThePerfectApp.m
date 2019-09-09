@@ -4,11 +4,12 @@
 #import "TPANonFatalReporting.h"
 #import "TPAReactNativeTimingEvents.h"
 #import "TPAStartupNotifier.h"
-#if __has_include(<React/RCTConvert.h>)
+//#if __has_include(<React/RCTConvert.h>)
 #import <React/RCTConvert.h>
-#else
-#import "RCTConvert.h"
-#endif
+#import <React/RCTAssert.h>
+//#else
+//#import "RCTConvert.h"
+//#endif
 
 @implementation TPAThePerfectApp
 {
@@ -198,11 +199,6 @@ RCT_EXPORT_METHOD(trackEventWithTags:(NSString *)category name:(NSString *)name 
 
 #pragma mark - Duration tracking
 
-RCT_EXPORT_BLOCKING_SYNCHRONOUS_METHOD(getNewTimingEventIdentifier)
-{
-    return [NSUUID UUID].UUIDString;
-}
-
 RCT_EXPORT_METHOD(startTimingEvent:(NSString *)identifier startTimestamp:(NSUInteger)startTimestamp category:(NSString *)category name:(NSString *)name)
 {
     [_timingEventHandler startTimingEvent:identifier startTimestamp:startTimestamp category:category name:name];
@@ -223,6 +219,15 @@ RCT_EXPORT_METHOD(trackTimingEventWithTags:(NSString *)identifier endTimestamp:(
 RCT_EXPORT_METHOD(reportNonFatalIssue:(NSString *)stackTrace reason:(NSString *)reason userInfo:(NSDictionary *)userInfo)
 {
     [TPANonFatalReporting reportNonFatalIssueWithReason:reason stacktrace:stackTrace userInfo:userInfo];
+}
+
+#pragma mark - Fatal Error
+
+RCT_EXPORT_METHOD(exitWithFatalError:(NSString *)name stackTrace:(NSArray<NSDictionary *> *)stackTrace)
+{
+    NSString *exceptionName = [NSString stringWithFormat:@"Unhandled JS Exception: %@", name];
+    NSError *error = [NSError errorWithDomain:RCTErrorDomain code:0 userInfo:@{RCTJSStackTraceKey: stackTrace, NSLocalizedDescriptionKey: exceptionName}];
+    RCTFatal(error);
 }
 
 #pragma mark - Feedback
