@@ -6,11 +6,12 @@ import java.util.Map;
 import io.tpa.tpalib.TPA;
 import io.tpa.tpalib.TpaTimingEvent;
 
-
 public class ReactNativeTimingEvents {
+
     private Map<String, TimingEventWrapper> timingEvents;
 
     private static class TimingEventWrapper {
+
         final TpaTimingEvent timingEvent;
         final long startTimestamp;
 

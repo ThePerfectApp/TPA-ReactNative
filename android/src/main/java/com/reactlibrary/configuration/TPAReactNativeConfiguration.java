@@ -10,6 +10,7 @@ import io.tpa.tpalib.feedback.FeedbackInvocation;
 
 // This class is used to bridge the gap between iOS and Android configuration until a more permanent alignment is done between the two platforms.
 public class TPAReactNativeConfiguration {
+
     //region Constants
     private final static String AutomaticUpdateCheckEnabled = "automatic";
     //endregion

@@ -217,6 +217,29 @@ interface TPAInterface {
      */
     trackEventWithTags(category: string, name: string, tags: { [key: string]: string }): void;
 
+    // Number Event tracking
+
+    /**
+	 * Track a number event with a category and name. All events with the same category will be grouped on TPA.
+	 * @example
+	 * TPA.trackNumberEvent('My Category', 'Custom Event', 4.83);
+	 * @param {string} category - the category of the event.
+	 * @param {string} name - the name of the event.
+	 * @param {number} number - the number of the event.
+	 */
+    trackNumberEvent(category: string, name: string, number: number): void;
+
+    /**
+	 * Track a number event with a category and name. All events with the same category will be grouped on TPA.
+	 * @example
+	 * TPA.trackNumberEvent('My Category', 'Custom Event', 4.83, {'My Tag': 'Value'});
+	 * @param {string} category - the category of the event.
+	 * @param {string} name - the name of the event.
+	 * @param {number} number - the number of the event.
+	 * @param {Object<string, string>} tags - an object containing tags, only string values are supported. Important: Do NOT include personal data in your tags.
+	 */
+	trackNumberEventWithTags(category: string, name: string, number: number, tags: { [key: string]: string }): void;
+
     // Duration tracking
 
     /**
