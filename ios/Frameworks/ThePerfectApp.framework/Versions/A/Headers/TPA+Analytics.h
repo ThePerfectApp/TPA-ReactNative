@@ -125,6 +125,29 @@ NS_SWIFT_NAME(trackTimingEvent(_:duration:));
 NS_SWIFT_NAME(trackTimingEvent(_:duration:tags:));
 
 
+#pragma mark - Numerical Events
+
+/**
+ * Tracks a numerical event with a category.
+ *
+ * @param category  The category of the event
+ * @param name      The event name to track
+ * @param value     The numerical value
+ */
+- (void)trackEventWithCategory:(NSString * _Nonnull)category name:(NSString * _Nonnull)name doubleValue:(double)doubleValue
+NS_SWIFT_NAME(trackEvent(category:name:doubleValue:));
+
+/**
+ * Tracks a numerical event with a category and tags.
+ *
+ * @param name      The event name to track
+ * @param category  The category of the event
+ * @param tags      Tags that can be used to filter events on TPA.
+ */
+- (void)trackEventWithCategory:(NSString * _Nonnull)category name:(NSString * _Nonnull)name doubleValue:(double)doubleValue tags:(NSDictionary * _Nullable)tags
+NS_SWIFT_NAME(trackEvent(category:name:doubleValue:tags:));
+
+
 #pragma mark - Screen Tracking
 
 /**
