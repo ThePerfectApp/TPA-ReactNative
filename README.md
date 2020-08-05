@@ -44,6 +44,9 @@ TPA.trackScreenDisappearing('Screen Title');
 const timing = TPA.startTimingEvent('Timing', 'Level 1');
 TPA.trackTimingEvent(timing);
 
+// Track numeric value
+TPA.trackValueEvent('Value', 'amount transferred', 42.0);
+
 
 // Logs
 TPA.log.debug('Error during activation');
