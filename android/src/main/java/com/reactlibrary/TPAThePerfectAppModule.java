@@ -101,15 +101,15 @@ public class TPAThePerfectAppModule extends ReactContextBaseJavaModule {
     }
     //endregion
 
-    //region Number Event
+    //region Numeric value Event
     @ReactMethod
-    public void trackNumberEvent(final String category, final String name, final Double number) {
-        TPA.trackEvent(category, name, number);
+    public void trackValueEvent(final String category, final String name, final Double value) {
+        TPA.trackEvent(category, name, value);
     }
 
     @ReactMethod
-    public void trackNumberEventWithTags(final String category, final String name, final Double number, final ReadableMap tags) {
-        TPA.trackEvent(category, name, number, recursivelyDeconstructReadableMapString(tags));
+    public void trackValueEventWithTags(final String category, final String name, final Double value, final ReadableMap tags) {
+        TPA.trackEvent(category, name, value, recursivelyDeconstructReadableMapString(tags));
     }
     //endregion
 
