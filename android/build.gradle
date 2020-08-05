@@ -48,5 +48,5 @@ dependencies {
     //noinspection GradleDynamicVersion
     implementation 'com.facebook.react:react-native:+'
 
-    api(name: 'tpalib-5.1.0', ext: 'aar')
+    api(name: 'tpalib-5.1.1', ext: 'aar')
 }
