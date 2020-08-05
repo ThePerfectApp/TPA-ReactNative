@@ -197,6 +197,18 @@ RCT_EXPORT_METHOD(trackEventWithTags:(NSString *)category name:(NSString *)name 
     [[TPA shared] trackEventWithCategory:category name:name tags:tags];
 }
 
+#pragma mark - Numeric value tracking
+
+RCT_EXPORT_METHOD(trackValueEvent:(NSString *)category name:(NSString *)name value:(double)doubleValue)
+{
+    [[TPA shared] trackEventWithCategory:category name:name doubleValue:doubleValue];
+}
+
+RCT_EXPORT_METHOD(trackValueEventWithTags:(NSString *)category name:(NSString *)name value:(double)doubleValue tags:(NSDictionary *)tags)
+{
+    [[TPA shared] trackEventWithCategory:category name:name doubleValue:doubleValue tags:tags];
+}
+
 #pragma mark - Duration tracking
 
 RCT_EXPORT_METHOD(startTimingEvent:(NSString *)identifier startTimestamp:(NSUInteger)startTimestamp category:(NSString *)category name:(NSString *)name)

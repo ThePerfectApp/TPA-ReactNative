@@ -38,6 +38,9 @@ build/
 .gradle
 local.properties
 *.iml
+.classpath
+.project
+*/.settings
 
 # BUCK
 buck-out/
@@ -49,3 +52,6 @@ buck-out/
 
 # Local dev headers
 /ios/DevHeaders
+
+# Vs Code
+/.vscode

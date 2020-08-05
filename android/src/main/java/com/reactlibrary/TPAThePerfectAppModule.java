@@ -1,6 +1,4 @@
-
 package com.reactlibrary;
-
 
 import android.app.Activity;
 
@@ -12,7 +10,6 @@ import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableMapKeySetIterator;
 import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.common.JavascriptException;
-import com.facebook.react.devsupport.JSException;
 import com.facebook.react.util.JSStackTrace;
 import com.reactlibrary.configuration.TPAReactNativeConfiguration;
 import com.reactlibrary.timingevents.ReactNativeTimingEvents;
@@ -21,7 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import io.tpa.tpalib.TPA;
 import io.tpa.tpalib.TPACrossPlatformIssueReporting;
@@ -56,14 +52,16 @@ public class TPAThePerfectAppModule extends ReactContextBaseJavaModule {
         reactNativeTimingEvents = new ReactNativeTimingEvents();
         // The timing of TPA initialization can cause the AppLifeCycle to miss the initial onResume
         // In these cases getCurrentActivity of AppLifeCycle will be null, thus we can detect it and manually call onResume
-        if (getCurrentActivity() != null) {
-            TPACrossPlatformLifeCycle.initLifecycle(getCurrentActivity());
+        Activity currentActivity = getCurrentActivity();
+        if (currentActivity != null) {
+            TPACrossPlatformLifeCycle.initLifecycle(currentActivity);
         }
     }
     //endregion
 
     //region Tracking
     private interface TrackingAction {
+
         void track();
     }
 
@@ -103,6 +101,18 @@ public class TPAThePerfectAppModule extends ReactContextBaseJavaModule {
     }
     //endregion
 
+    //region Numeric value Event
+    @ReactMethod
+    public void trackValueEvent(final String category, final String name, final Double value) {
+        TPA.trackEvent(category, name, value);
+    }
+
+    @ReactMethod
+    public void trackValueEventWithTags(final String category, final String name, final Double value, final ReadableMap tags) {
+        TPA.trackEvent(category, name, value, recursivelyDeconstructReadableMapString(tags));
+    }
+    //endregion
+
     //region Timing Event
     @ReactMethod
     public void startTimingEvent(final String identifier, final Double startTimestamp, final String category, final String name) {
@@ -136,6 +146,7 @@ public class TPAThePerfectAppModule extends ReactContextBaseJavaModule {
         }
         throw new JavascriptException(JSStackTrace.format(message, stackTrace));
     }
+    //endregion
 
     //region Feedback
     @ReactMethod
